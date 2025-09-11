@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +36,7 @@ import ReportManagement from './ReportManagement';
 import UserManagement from './UserManagement';
 import CategoryManagement from './CategoryManagement';
 import DepartmentManagement from './DepartmentManagement';
+import QuickStats from './QuickStats';
 
 interface DashboardStats {
   totalReports: number;
@@ -65,9 +66,29 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardStats();
+
+    // Set up real-time subscription for dashboard updates
+    const channel = supabase
+      .channel('dashboard-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'reports'
+        },
+        () => {
+          fetchDashboardStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = useCallback(async () => {
     try {
       // Fetch report counts by status
       const { data: reportStats } = await supabase
@@ -135,7 +156,7 @@ export default function AdminDashboard() {
       console.error('Error fetching dashboard stats:', error);
       setLoading(false);
     }
-  };
+  }, []);
 
   const calculateAvgResolutionTime = (reports: any[]) => {
     const resolvedReports = reports.filter(r => r.status === 'resolved' && r.resolved_at);
@@ -190,52 +211,15 @@ export default function AdminDashboard() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.totalReports}</div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.totalUsers}</div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Resolved Reports</CardTitle>
-                    <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.resolvedReports}</div>
-                    <p className="text-xs text-muted-foreground">
-                      {stats.totalReports > 0 ? Math.round((stats.resolvedReports / stats.totalReports) * 100) : 0}% of total
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Avg Resolution Time</CardTitle>
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.avgResolutionTime}</div>
-                    <p className="text-xs text-muted-foreground">days</p>
-                  </CardContent>
-                </Card>
-              </div>
+              {/* Quick Stats */}
+              <QuickStats
+                totalReports={stats.totalReports}
+                submittedReports={stats.submittedReports}
+                inProgressReports={stats.inProgressReports}
+                resolvedReports={stats.resolvedReports}
+                totalUsers={stats.totalUsers}
+                avgResolutionTime={stats.avgResolutionTime}
+              />
 
               {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
