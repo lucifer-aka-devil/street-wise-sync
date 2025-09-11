@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, MapPin, Users, AlertTriangle } from 'lucide-react';
+import AdminInfo from '@/components/AdminInfo';
 
 export default function AuthPage() {
   const { signIn, signUp, loading } = useAuth();
@@ -84,7 +85,9 @@ export default function AuthPage() {
         </div>
 
         {/* Right side - Auth Form */}
-        <Card className="w-full max-w-md mx-auto">
+        <div className="space-y-4">
+          <AdminInfo />
+          <Card className="w-full max-w-md mx-auto">
           <CardHeader>
             <CardTitle>Welcome</CardTitle>
             <CardDescription>
@@ -179,6 +182,7 @@ export default function AuthPage() {
             </Tabs>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

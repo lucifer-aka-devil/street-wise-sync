@@ -135,7 +135,7 @@ export default function ReportManagement() {
       return;
     }
 
-    setReports((data || []) as Report[]);
+    setReports((data || []) as unknown as Report[]);
     setLoading(false);
   };
 

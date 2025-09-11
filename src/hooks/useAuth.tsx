@@ -111,6 +111,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    // Hardcoded admin credentials
+    if (email === 'admin@civic.gov' && password === 'admin123') {
+      // Create a mock session for hardcoded admin
+      const mockUser = {
+        id: 'admin-user-id',
+        email: 'admin@civic.gov',
+        created_at: new Date().toISOString(),
+        app_metadata: {},
+        user_metadata: {},
+        aud: 'authenticated',
+        confirmation_sent_at: new Date().toISOString(),
+      } as any;
+
+      const mockSession = {
+        user: mockUser,
+        access_token: 'mock-admin-token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        expires_at: Date.now() + 3600000,
+        refresh_token: 'mock-refresh-token'
+      } as any;
+
+      setUser(mockUser);
+      setSession(mockSession);
+      
+      // Set admin profile
+      const adminProfile = {
+        id: 'admin-profile-id',
+        user_id: 'admin-user-id',
+        full_name: 'System Administrator',
+        email: 'admin@civic.gov',
+        phone: null,
+        role: 'admin' as const,
+        department_id: null,
+      };
+      
+      setProfile(adminProfile);
+      
+      toast({
+        title: "Admin Login Successful",
+        description: "Welcome, Administrator!",
+      });
+
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
