@@ -43,11 +43,17 @@ export default function AuthPage() {
         {/* Left side - Branding */}
         <div className="space-y-6 text-center md:text-left">
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-primary">
-              CivicSense
-            </h1>
+            <div className="flex items-center justify-center md:justify-start gap-3">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                JH
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-primary">Government of Jharkhand</h1>
+                <p className="text-lg text-muted-foreground">Civic Reporting Portal</p>
+              </div>
+            </div>
             <p className="text-xl text-muted-foreground">
-              Connecting citizens with their local government for a better community
+              Official platform for citizens to report civic issues and track their resolution
             </p>
           </div>
 

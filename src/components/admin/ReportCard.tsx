@@ -14,7 +14,9 @@ import {
   Edit,
   ThumbsUp,
   AlertCircle,
-  Clock
+  Clock,
+  Trash2,
+  CheckCircle
 } from 'lucide-react';
 
 interface Report {
@@ -66,6 +68,7 @@ interface ReportCardProps {
   onAssignReport: (reportId: string, departmentId: string) => Promise<void>;
   onUpdateReport: (reportId: string, status: string, assignedTo?: string, message?: string) => Promise<void>;
   onUpdatePriority: (reportId: string, priority: string) => Promise<void>;
+  onDeleteReport: (reportId: string) => Promise<void>;
 }
 
 const statusConfig = {
@@ -89,7 +92,8 @@ const ReportCard = memo(({
   staff, 
   onAssignReport, 
   onUpdateReport,
-  onUpdatePriority 
+  onUpdatePriority,
+  onDeleteReport 
 }: ReportCardProps) => {
   const PriorityIcon = priorityConfig[report.priority].icon;
 
@@ -233,6 +237,27 @@ const ReportCard = memo(({
               staff={staff}
               onUpdate={onUpdateReport}
             />
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onUpdateReport(report.id, 'resolved')}
+              className="text-green-600 hover:text-green-700"
+              disabled={report.status === 'resolved'}
+            >
+              <CheckCircle className="h-4 w-4 mr-1" />
+              Mark Complete
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onDeleteReport(report.id)}
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Delete
+            </Button>
           </div>
         </div>
       </CardContent>

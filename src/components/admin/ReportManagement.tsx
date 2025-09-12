@@ -119,10 +119,10 @@ export default function ReportManagement() {
       .from('reports')
       .select(`
         *,
-        categories (id, name, color),
-        departments (id, name),
-        profiles!reports_user_id_fkey (full_name, email),
-        assigned_user:profiles!reports_assigned_to_fkey (full_name)
+        categories!left (id, name, color),
+        departments!left (id, name),
+        profiles!left!reports_user_id_fkey (full_name, email),
+        assigned_user:profiles!left!reports_assigned_to_fkey (full_name)
       `)
       .order('created_at', { ascending: false });
 
@@ -276,6 +276,31 @@ export default function ReportManagement() {
     }
   }, [fetchReports]);
 
+  const deleteReport = useCallback(async (reportId: string) => {
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .delete()
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Report Deleted",
+        description: "The report has been permanently deleted.",
+      });
+
+      fetchReports();
+    } catch (error) {
+      console.error('Error deleting report:', error);
+      toast({
+        title: "Delete Error",
+        description: "There was an error deleting the report. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [fetchReports]);
+
   const filteredReports = useMemo(() => {
     return reports.filter(report => {
       const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -403,6 +428,7 @@ export default function ReportManagement() {
             onAssignReport={assignReport}
             onUpdateReport={updateReportStatus}
             onUpdatePriority={updatePriority}
+            onDeleteReport={deleteReport}
           />
         ))}
       </div>

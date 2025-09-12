@@ -23,7 +23,15 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-primary">CivicSense</h1>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                  JH
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-primary">Government of Jharkhand</h1>
+                  <p className="text-xs text-muted-foreground">Civic Reporting Portal</p>
+                </div>
+              </div>
             </div>
             
             {user && (
