@@ -1,57 +1,31 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { toast } from '@/hooks/use-toast';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
-import {
-  Users,
-  FileText,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-  Filter,
-  Search,
-  Edit,
-  Trash2,
-  Eye
-} from 'lucide-react';
+import QuickStats from './QuickStats';
 import ReportManagement from './ReportManagement';
 import UserManagement from './UserManagement';
 import CategoryManagement from './CategoryManagement';
 import DepartmentManagement from './DepartmentManagement';
-import QuickStats from './QuickStats';
-
-interface DashboardStats {
-  totalReports: number;
-  submittedReports: number;
-  inProgressReports: number;
-  resolvedReports: number;
-  totalUsers: number;
-  avgResolutionTime: number;
-}
-
-const COLORS = ['#3B82F6', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6'];
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  LineChart,
+  Line,
+} from 'recharts';
 
 export default function AdminDashboard() {
   const { isAdmin, isStaff } = useAuth();
-  const [stats, setStats] = useState<DashboardStats>({
+  const [stats, setStats] = useState({
     totalReports: 0,
     submittedReports: 0,
     inProgressReports: 0,
@@ -60,96 +34,96 @@ export default function AdminDashboard() {
     avgResolutionTime: 0,
   });
 
-  const [categoryStats, setCategoryStats] = useState<any[]>([]);
   const [statusStats, setStatusStats] = useState<any[]>([]);
+  const [categoryStats, setCategoryStats] = useState<any[]>([]);
+  const [trendStats, setTrendStats] = useState<any[]>([]);
+  const [priorityStats, setPriorityStats] = useState<any[]>([]);
+  const [resolutionStats, setResolutionStats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardStats();
-
-    // Set up real-time subscription for dashboard updates
     const channel = supabase
       .channel('dashboard-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'reports'
-        },
-        () => {
-          fetchDashboardStats();
-        }
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, () => {
+        fetchDashboardStats();
+      })
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => supabase.removeChannel(channel);
   }, []);
 
   const fetchDashboardStats = useCallback(async () => {
     try {
-      // Fetch report counts by status
-      const { data: reportStats } = await supabase
-        .from('reports')
-        .select('status, created_at, resolved_at');
+      const { data: reports } = await supabase.from('reports').select('status, created_at, resolved_at, priority, categories (name)');
+      const { data: userStats } = await supabase.from('profiles').select('id').eq('role', 'citizen');
 
-      // Fetch user count
-      const { data: userStats } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('role', 'citizen');
+      if (!reports) return;
 
-      // Fetch category stats
-      const { data: categories } = await supabase
-        .from('reports')
-        .select(`
-          categories (name, color),
-          id
-        `);
+      const submitted = reports.filter(r => r.status === 'submitted').length;
+      const acknowledged = reports.filter(r => r.status === 'acknowledged').length;
+      const inProgress = reports.filter(r => r.status === 'in_progress').length;
+      const resolved = reports.filter(r => r.status === 'resolved').length;
+      const rejected = reports.filter(r => r.status === 'rejected').length;
 
-      if (reportStats) {
-        const submitted = reportStats.filter(r => r.status === 'submitted').length;
-        const acknowledged = reportStats.filter(r => r.status === 'acknowledged').length;
-        const inProgress = reportStats.filter(r => r.status === 'in_progress').length;
-        const resolved = reportStats.filter(r => r.status === 'resolved').length;
-        const rejected = reportStats.filter(r => r.status === 'rejected').length;
+      setStats({
+        totalReports: reports.length,
+        submittedReports: submitted,
+        inProgressReports: inProgress,
+        resolvedReports: resolved,
+        totalUsers: userStats?.length || 0,
+        avgResolutionTime: calculateAvgResolutionTime(reports),
+      });
 
-        setStats({
-          totalReports: reportStats.length,
-          submittedReports: submitted,
-          inProgressReports: inProgress,
-          resolvedReports: resolved,
-          totalUsers: userStats?.length || 0,
-          avgResolutionTime: calculateAvgResolutionTime(reportStats),
-        });
+      setStatusStats([
+        { name: 'Submitted', value: submitted, color: '#3B82F6' },
+        { name: 'Acknowledged', value: acknowledged, color: '#F59E0B' },
+        { name: 'In Progress', value: inProgress, color: '#10B981' },
+        { name: 'Resolved', value: resolved, color: '#059669' },
+        { name: 'Rejected', value: rejected, color: '#EF4444' },
+      ]);
 
-        // Prepare status chart data
-        setStatusStats([
-          { name: 'Submitted', value: submitted, color: '#3B82F6' },
-          { name: 'Acknowledged', value: acknowledged, color: '#F59E0B' },
-          { name: 'In Progress', value: inProgress, color: '#10B981' },
-          { name: 'Resolved', value: resolved, color: '#059669' },
-          { name: 'Rejected', value: rejected, color: '#EF4444' },
-        ]);
-      }
+      // Reports by category
+      const categoryCount: Record<string, number> = {};
+      reports.forEach(r => {
+        const categoryName = r.categories?.name || 'Unknown';
+        categoryCount[categoryName] = (categoryCount[categoryName] || 0) + 1;
+      });
+      setCategoryStats(Object.entries(categoryCount).map(([name, count]) => ({ name, count })));
 
-      // Prepare category chart data
-      if (categories) {
-        const categoryCount: Record<string, number> = {};
-        categories.forEach((report: any) => {
-          const categoryName = report.categories?.name || 'Unknown';
-          categoryCount[categoryName] = (categoryCount[categoryName] || 0) + 1;
-        });
+      // Reports trend over time (daily)
+      const dailyCount: Record<string, number> = {};
+      reports.forEach(r => {
+        const day = new Date(r.created_at).toLocaleDateString();
+        dailyCount[day] = (dailyCount[day] || 0) + 1;
+      });
+      setTrendStats(Object.entries(dailyCount).map(([date, count]) => ({ date, count })));
 
-        const categoryData = Object.entries(categoryCount).map(([name, count]) => ({
-          name,
-          count,
-        }));
+      // Reports by priority
+      const priorityCount: Record<string, number> = {};
+      reports.forEach(r => {
+        const priority = r.priority || 'Unspecified';
+        priorityCount[priority] = (priorityCount[priority] || 0) + 1;
+      });
+      setPriorityStats(Object.entries(priorityCount).map(([priority, count]) => ({ priority, count })));
 
-        setCategoryStats(categoryData);
-      }
+      // Avg resolution time by category
+      const resolutionData: Record<string, number[]> = {};
+      reports.forEach(r => {
+        if (r.status === 'resolved' && r.resolved_at) {
+          const created = new Date(r.created_at).getTime();
+          const resolved = new Date(r.resolved_at).getTime();
+          const days = (resolved - created) / (1000 * 60 * 60 * 24);
+          const cat = r.categories?.name || 'Unknown';
+          if (!resolutionData[cat]) resolutionData[cat] = [];
+          resolutionData[cat].push(days);
+        }
+      });
+      setResolutionStats(
+        Object.entries(resolutionData).map(([cat, times]) => ({
+          category: cat,
+          avgDays: times.reduce((a, b) => a + b, 0) / times.length,
+        }))
+      );
 
       setLoading(false);
     } catch (error) {
@@ -161,42 +135,25 @@ export default function AdminDashboard() {
   const calculateAvgResolutionTime = (reports: any[]) => {
     const resolvedReports = reports.filter(r => r.status === 'resolved' && r.resolved_at);
     if (resolvedReports.length === 0) return 0;
-
-    const totalTime = resolvedReports.reduce((acc, report) => {
-      const created = new Date(report.created_at).getTime();
-      const resolved = new Date(report.resolved_at).getTime();
+    const totalTime = resolvedReports.reduce((acc, r) => {
+      const created = new Date(r.created_at).getTime();
+      const resolved = new Date(r.resolved_at).getTime();
       return acc + (resolved - created);
     }, 0);
-
-    return Math.round(totalTime / resolvedReports.length / (1000 * 60 * 60 * 24)); // Days
+    return Math.round(totalTime / resolvedReports.length / (1000 * 60 * 60 * 24));
   };
 
   if (!isStaff) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <h2 className="text-2xl font-bold mb-2">Access Denied</h2>
-            <p className="text-muted-foreground">
-              You don't have permission to access the admin dashboard.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <div className="p-8 text-center">Access Denied</div>;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          Manage reports, users, and monitor civic engagement
-        </p>
-      </div>
+      <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+      <p className="text-muted-foreground mb-6">Monitor and analyze complaints</p>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+      <Tabs defaultValue="overview">
+        <TabsList className="grid grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
@@ -204,45 +161,22 @@ export default function AdminDashboard() {
           <TabsTrigger value="departments">Departments</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="mt-6">
+        <TabsContent value="overview" className="mt-6 space-y-6">
           {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            </div>
+            <div className="text-center py-8">Loading...</div>
           ) : (
-            <div className="space-y-6">
-              {/* Quick Stats */}
-              <QuickStats
-                totalReports={stats.totalReports}
-                submittedReports={stats.submittedReports}
-                inProgressReports={stats.inProgressReports}
-                resolvedReports={stats.resolvedReports}
-                totalUsers={stats.totalUsers}
-                avgResolutionTime={stats.avgResolutionTime}
-              />
+            <>
+              <QuickStats {...stats} />
 
-              {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Status Pie */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Reports by Status</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle>Reports by Status</CardTitle></CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
                       <PieChart>
-                        <Pie
-                          data={statusStats}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {statusStats.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
+                        <Pie data={statusStats} dataKey="value" cx="50%" cy="50%" outerRadius={90} label>
+                          {statusStats.map((e, i) => (<Cell key={i} fill={e.color} />))}
                         </Pie>
                         <Tooltip />
                       </PieChart>
@@ -250,10 +184,9 @@ export default function AdminDashboard() {
                   </CardContent>
                 </Card>
 
+                {/* Category Bar */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Reports by Category</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle>Reports by Category</CardTitle></CardHeader>
                   <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
                       <BarChart data={categoryStats}>
@@ -267,25 +200,65 @@ export default function AdminDashboard() {
                   </CardContent>
                 </Card>
               </div>
-            </div>
+
+              {/* New Charts Row */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Trend Line */}
+                <Card>
+                  <CardHeader><CardTitle>Complaint Trend Over Time</CardTitle></CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={trendStats}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip />
+                        <Line type="monotone" dataKey="count" stroke="#10B981" />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                {/* Priority Bar */}
+                <Card>
+                  <CardHeader><CardTitle>Reports by Priority</CardTitle></CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={priorityStats}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="priority" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="count" fill="#F59E0B" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Resolution Time */}
+              <Card>
+                <CardHeader><CardTitle>Average Resolution Time by Category</CardTitle></CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={resolutionStats}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="category" />
+                      <YAxis label={{ value: 'Days', angle: -90, position: 'insideLeft' }} />
+                      <Tooltip />
+                      <Bar dataKey="avgDays" fill="#8B5CF6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </>
           )}
         </TabsContent>
 
-        <TabsContent value="reports" className="mt-6">
-          <ReportManagement />
-        </TabsContent>
-
-        <TabsContent value="users" className="mt-6">
-          <UserManagement />
-        </TabsContent>
-
-        <TabsContent value="categories" className="mt-6">
-          <CategoryManagement />
-        </TabsContent>
-
-        <TabsContent value="departments" className="mt-6">
-          <DepartmentManagement />
-        </TabsContent>
+        <TabsContent value="reports"><ReportManagement /></TabsContent>
+        <TabsContent value="users"><UserManagement /></TabsContent>
+        <TabsContent value="categories"><CategoryManagement /></TabsContent>
+        <TabsContent value="departments"><DepartmentManagement /></TabsContent>
       </Tabs>
     </div>
   );
