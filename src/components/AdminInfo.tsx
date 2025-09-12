@@ -11,7 +11,7 @@ export default function AdminInfo() {
           Admin Portal Access
         </CardTitle>
         <CardDescription>
-          Use these hardcoded credentials to access the admin portal
+          Use these credentials to access the admin account
         </CardDescription>
       </CardHeader>
       <CardContent>
