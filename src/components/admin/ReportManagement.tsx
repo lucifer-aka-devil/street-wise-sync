@@ -115,24 +115,49 @@ export default function ReportManagement() {
   }, []);
 
   const fetchReports = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('reports')
-      .select(`
-        *,
-        categories!left (id, name, color),
-        departments!left (id, name),
-        profiles!left!reports_user_id_fkey (full_name, email),
-        assigned_user:profiles!left!reports_assigned_to_fkey (full_name)
-      `)
-      .order('created_at', { ascending: false });
+    try {
+      // First get all reports
+      const { data: reportsData, error: reportsError } = await supabase
+        .from('reports')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching reports:', error);
-      return;
+      if (reportsError) {
+        console.error('Error fetching reports:', reportsError);
+        setLoading(false);
+        return;
+      }
+
+      // Get categories
+      const { data: categoriesData } = await supabase
+        .from('categories')
+        .select('id, name, color');
+
+      // Get departments  
+      const { data: departmentsData } = await supabase
+        .from('departments')
+        .select('id, name');
+
+      // Get profiles
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, email');
+
+      // Combine the data
+      const enrichedReports = (reportsData || []).map(report => ({
+        ...report,
+        categories: categoriesData?.find(cat => cat.id === report.category_id) || null,
+        departments: departmentsData?.find(dept => dept.id === report.department_id) || null,
+        profiles: profilesData?.find(profile => profile.user_id === report.user_id) || null,
+        assigned_user: profilesData?.find(profile => profile.user_id === report.assigned_to) || null
+      }));
+
+      setReports(enrichedReports as unknown as Report[]);
+    } catch (error) {
+      console.error('Error in fetchReports:', error);
+    } finally {
+      setLoading(false);
     }
-
-    setReports((data || []) as unknown as Report[]);
-    setLoading(false);
   }, []);
 
   const fetchDepartments = async () => {
