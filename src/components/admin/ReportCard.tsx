@@ -100,17 +100,18 @@ const ReportCard = memo(({
   return (
     <Card className="hover:shadow-md transition-shadow duration-200">
       <CardHeader>
-        <div className="flex justify-between items-start">
-          <div className="space-y-2 flex-1">
-            <CardTitle className="text-lg leading-tight">{report.title}</CardTitle>
+        <div className="space-y-4">
+          {/* Title and basic info */}
+          <div>
+            <CardTitle className="text-lg leading-tight mb-2">{report.title}</CardTitle>
             <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
               <div className="flex items-center gap-1">
                 <User className="h-4 w-4" />
-                {report.profiles?.full_name || 'Unknown User'}
+                <span className="truncate">{report.profiles?.full_name || 'Unknown User'}</span>
               </div>
               <div className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
-                {report.address || 'No address'}
+                <span className="truncate">{report.address || 'No address'}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
@@ -118,7 +119,9 @@ const ReportCard = memo(({
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-2">
+
+          {/* Badges and status - responsive layout */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <div className="flex gap-2 flex-wrap">
               <Badge variant="outline" className="flex items-center gap-1">
                 <div 
@@ -127,11 +130,20 @@ const ReportCard = memo(({
                 />
                 {report.categories?.name}
               </Badge>
+              <Badge 
+                variant="secondary" 
+                className={`${statusConfig[report.status].color} text-white flex items-center gap-1`}
+              >
+                {statusConfig[report.status].label}
+              </Badge>
+            </div>
+            
+            <div className="flex flex-col sm:items-end gap-2">
               <Select
                 defaultValue={report.priority}
                 onValueChange={(value) => onUpdatePriority(report.id, value)}
               >
-                <SelectTrigger className="w-[110px] h-6 text-xs">
+                <SelectTrigger className="w-full sm:w-[110px] h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -161,23 +173,18 @@ const ReportCard = memo(({
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <Badge 
-                variant="secondary" 
-                className={`${statusConfig[report.status].color} text-white flex items-center gap-1`}
-              >
-                {statusConfig[report.status].label}
-              </Badge>
+              
+              {report.assigned_user && (
+                <div className="text-sm text-muted-foreground">
+                  Assigned to: {report.assigned_user.full_name}
+                </div>
+              )}
+              {report.departments && (
+                <div className="text-sm text-muted-foreground">
+                  Department: {report.departments.name}
+                </div>
+              )}
             </div>
-            {report.assigned_user && (
-              <div className="text-sm text-muted-foreground">
-                Assigned to: {report.assigned_user.full_name}
-              </div>
-            )}
-            {report.departments && (
-              <div className="text-sm text-muted-foreground">
-                Department: {report.departments.name}
-              </div>
-            )}
           </div>
         </div>
       </CardHeader>
@@ -185,7 +192,7 @@ const ReportCard = memo(({
         <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{report.description}</p>
         
         {report.photos && report.photos.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
             {report.photos.slice(0, 3).map((photo, index) => (
               <img
                 key={index}
@@ -203,62 +210,66 @@ const ReportCard = memo(({
           </div>
         )}
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <ThumbsUp className="h-4 w-4" />
-              {report.votes_count}
-            </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Eye className="h-4 w-4" />
-              {report.views_count}
-            </div>
+        {/* Stats */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <ThumbsUp className="h-4 w-4" />
+            {report.votes_count}
           </div>
-          
-          <div className="flex gap-2">
-            <Select
-              defaultValue={report.departments?.id || ""}
-              onValueChange={(value) => onAssignReport(report.id, value)}
-            >
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Assign Department" />
-              </SelectTrigger>
-              <SelectContent>
-                {departments.map((dept) => (
-                  <SelectItem key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Eye className="h-4 w-4" />
+            {report.views_count}
+          </div>
+        </div>
 
-            <ReportUpdateDialog
-              report={report}
-              staff={staff}
-              onUpdate={onUpdateReport}
-            />
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onUpdateReport(report.id, 'resolved')}
-              className="text-green-600 hover:text-green-700"
-              disabled={report.status === 'resolved'}
-            >
-              <CheckCircle className="h-4 w-4 mr-1" />
-              Mark Complete
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onDeleteReport(report.id)}
-              className="text-red-600 hover:text-red-700"
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete
-            </Button>
-          </div>
+        {/* Department Assignment */}
+        <div className="mb-4">
+          <Select
+            defaultValue={report.departments?.id || ""}
+            onValueChange={(value) => onAssignReport(report.id, value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Assign Department" />
+            </SelectTrigger>
+            <SelectContent>
+              {departments.map((dept) => (
+                <SelectItem key={dept.id} value={dept.id}>
+                  {dept.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* Action buttons - responsive layout */}
+        <div className="flex flex-col sm:flex-row gap-2">
+          <ReportUpdateDialog
+            report={report}
+            staff={staff}
+            onUpdate={onUpdateReport}
+          />
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onUpdateReport(report.id, 'resolved')}
+            className="text-green-600 hover:text-green-700 flex-1 sm:flex-none"
+            disabled={report.status === 'resolved'}
+          >
+            <CheckCircle className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">Mark Complete</span>
+            <span className="sm:hidden">Complete</span>
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onDeleteReport(report.id)}
+            className="text-red-600 hover:text-red-700 flex-1 sm:flex-none"
+          >
+            <Trash2 className="h-4 w-4 mr-1" />
+            Delete
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -279,15 +290,15 @@ const ReportUpdateDialog = memo(({ report, staff, onUpdate }: ReportUpdateDialog
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
           <Edit className="h-4 w-4 mr-1" />
           Update
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto mx-4">
         <DialogHeader>
           <DialogTitle>Update Report Status</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="break-words">
             Update the status of "{report.title}"
           </DialogDescription>
         </DialogHeader>
@@ -330,11 +341,12 @@ const ReportUpdateDialog = memo(({ report, staff, onUpdate }: ReportUpdateDialog
               placeholder="Provide an update message for the citizen..."
               value={updateMessage}
               onChange={(e) => setUpdateMessage(e.target.value)}
+              className="min-h-[80px]"
             />
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button variant="outline">
+          <div className="flex flex-col sm:flex-row justify-end gap-2">
+            <Button variant="outline" className="w-full sm:w-auto">
               Cancel
             </Button>
             <Button 
@@ -346,6 +358,7 @@ const ReportUpdateDialog = memo(({ report, staff, onUpdate }: ReportUpdateDialog
                   updateMessage.trim() || undefined
                 );
               }}
+              className="w-full sm:w-auto"
             >
               Update Report
             </Button>
