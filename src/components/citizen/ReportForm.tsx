@@ -197,15 +197,15 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MapPin className="h-5 w-5" />
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+          <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
           Report an Issue
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
             <FormField
               control={form.control}
               name="title"
@@ -238,7 +238,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="category_id"
@@ -311,14 +311,14 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="absolute right-2 top-1/2 -translate-y-1/2"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 px-2"
                         onClick={getCurrentLocation}
                         disabled={gettingLocation}
                       >
                         {gettingLocation ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                         ) : (
-                          <MapPin className="h-4 w-4" />
+                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                         )}
                       </Button>
                     </div>
@@ -353,22 +353,22 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               </div>
 
               {photos.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {photos.map((photo, index) => (
                     <div key={index} className="relative">
                       <img
                         src={URL.createObjectURL(photo)}
                         alt={`Upload ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-md"
+                        className="w-full h-16 sm:h-20 object-cover rounded-md"
                       />
                       <Button
                         type="button"
                         variant="destructive"
                         size="sm"
-                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                        className="absolute -top-1 -right-1 h-5 w-5 sm:h-6 sm:w-6 rounded-full p-0"
                         onClick={() => removePhoto(index)}
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-2 w-2 sm:h-3 sm:w-3" />
                       </Button>
                     </div>
                   ))}

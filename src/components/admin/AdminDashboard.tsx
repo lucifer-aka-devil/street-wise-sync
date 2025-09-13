@@ -49,7 +49,10 @@ export default function AdminDashboard() {
         fetchDashboardStats();
       })
       .subscribe();
-    return () => supabase.removeChannel(channel);
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchDashboardStats = useCallback(async () => {
@@ -148,17 +151,28 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-      <p className="text-muted-foreground mb-6">Monitor and analyze complaints</p>
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Admin Dashboard</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Monitor and analyze complaints</p>
+      </div>
 
       <Tabs defaultValue="overview">
-        <TabsList className="grid grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="departments">Departments</TabsTrigger>
+        <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto p-1">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">
+            <span className="hidden sm:inline">Overview</span>
+            <span className="sm:hidden">Stats</span>
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="text-xs sm:text-sm px-2 py-2">Reports</TabsTrigger>
+          <TabsTrigger value="users" className="text-xs sm:text-sm px-2 py-2">Users</TabsTrigger>
+          <TabsTrigger value="categories" className="text-xs sm:text-sm px-2 py-2">
+            <span className="hidden sm:inline">Categories</span>
+            <span className="sm:hidden">Cat</span>
+          </TabsTrigger>
+          <TabsTrigger value="departments" className="text-xs sm:text-sm px-2 py-2">
+            <span className="hidden sm:inline">Departments</span>
+            <span className="sm:hidden">Dept</span>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
@@ -168,14 +182,23 @@ export default function AdminDashboard() {
             <>
               <QuickStats {...stats} />
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
                 {/* Status Pie */}
                 <Card>
-                  <CardHeader><CardTitle>Reports by Status</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base sm:text-lg">Reports by Status</CardTitle>
+                  </CardHeader>
                   <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                       <PieChart>
-                        <Pie data={statusStats} dataKey="value" cx="50%" cy="50%" outerRadius={90} label>
+                        <Pie 
+                          data={statusStats} 
+                          dataKey="value" 
+                          cx="50%" 
+                          cy="50%" 
+                          outerRadius={80}
+                          label={(entry) => window.innerWidth > 640 ? entry.name : ''}
+                        >
                           {statusStats.map((e, i) => (<Cell key={i} fill={e.color} />))}
                         </Pie>
                         <Tooltip />
@@ -186,13 +209,21 @@ export default function AdminDashboard() {
 
                 {/* Category Bar */}
                 <Card>
-                  <CardHeader><CardTitle>Reports by Category</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base sm:text-lg">Reports by Category</CardTitle>
+                  </CardHeader>
                   <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                       <BarChart data={categoryStats}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12 }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip />
                         <Bar dataKey="count" fill="#3B82F6" />
                       </BarChart>
@@ -202,18 +233,26 @@ export default function AdminDashboard() {
               </div>
 
               {/* New Charts Row */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
                 {/* Trend Line */}
                 <Card>
-                  <CardHeader><CardTitle>Complaint Trend Over Time</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base sm:text-lg">Complaint Trend</CardTitle>
+                  </CardHeader>
                   <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                       <LineChart data={trendStats}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
+                        <XAxis 
+                          dataKey="date" 
+                          tick={{ fontSize: 12 }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip />
-                        <Line type="monotone" dataKey="count" stroke="#10B981" />
+                        <Line type="monotone" dataKey="count" stroke="#10B981" strokeWidth={2} />
                       </LineChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -221,13 +260,15 @@ export default function AdminDashboard() {
 
                 {/* Priority Bar */}
                 <Card>
-                  <CardHeader><CardTitle>Reports by Priority</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base sm:text-lg">Reports by Priority</CardTitle>
+                  </CardHeader>
                   <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                       <BarChart data={priorityStats}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="priority" />
-                        <YAxis />
+                        <XAxis dataKey="priority" tick={{ fontSize: 12 }} />
+                        <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip />
                         <Bar dataKey="count" fill="#F59E0B" />
                       </BarChart>
@@ -238,13 +279,24 @@ export default function AdminDashboard() {
 
               {/* Resolution Time */}
               <Card>
-                <CardHeader><CardTitle>Average Resolution Time by Category</CardTitle></CardHeader>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base sm:text-lg">Average Resolution Time by Category</CardTitle>
+                </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={resolutionStats}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="category" />
-                      <YAxis label={{ value: 'Days', angle: -90, position: 'insideLeft' }} />
+                      <XAxis 
+                        dataKey="category" 
+                        tick={{ fontSize: 12 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis 
+                        label={{ value: 'Days', angle: -90, position: 'insideLeft' }}
+                        tick={{ fontSize: 12 }}
+                      />
                       <Tooltip />
                       <Bar dataKey="avgDays" fill="#8B5CF6" />
                     </BarChart>

@@ -89,29 +89,29 @@ const QuickStats = memo(({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-4 sm:mb-6">
       {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (
           <Card key={index} className="hover:shadow-md transition-shadow duration-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <Icon className={`h-4 w-4 ${stat.color}`} />
+              <CardTitle className="text-xs sm:text-sm font-medium leading-none">{stat.title}</CardTitle>
+              <Icon className={`h-3 w-3 sm:h-4 sm:w-4 ${stat.color} flex-shrink-0`} />
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold">
+                <div className="text-lg sm:text-2xl font-bold">
                   {stat.value}
-                  {stat.suffix && <span className="text-sm text-muted-foreground ml-1">{stat.suffix}</span>}
+                  {stat.suffix && <span className="text-xs sm:text-sm text-muted-foreground ml-1">{stat.suffix}</span>}
                 </div>
                 {stat.trend !== undefined && stat.trend !== 0 && (
-                  <div className={`flex items-center gap-1 text-sm ${
+                  <div className={`flex items-center gap-1 text-xs sm:text-sm ${
                     stat.trend > 0 ? 'text-green-600' : 'text-red-600'
                   }`}>
                     {stat.trend > 0 ? (
-                      <TrendingUp className="h-3 w-3" />
+                      <TrendingUp className="h-2 w-2 sm:h-3 sm:w-3" />
                     ) : (
-                      <TrendingDown className="h-3 w-3" />
+                      <TrendingDown className="h-2 w-2 sm:h-3 sm:w-3" />
                     )}
                     {Math.abs(stat.trend)}
                   </div>
@@ -119,7 +119,7 @@ const QuickStats = memo(({
                 {stat.badge && (
                   <Badge 
                     variant={stat.badge === 'High' ? 'destructive' : stat.badge === 'Medium' ? 'default' : 'secondary'}
-                    className="text-xs"
+                    className="text-xs px-1"
                   >
                     {stat.badge}
                   </Badge>
