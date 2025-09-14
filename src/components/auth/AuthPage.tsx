@@ -46,7 +46,7 @@ export default function AuthPage() {
     <div className="flex items-center justify-center md:justify-start gap-3">
       <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden">
         <img
-          src="/logo.png"  
+          src="/logo.png"   // <- replace with actual logo path
           alt="Jharkhand Government Logo"
           className="w-full h-full object-contain"
         />
