@@ -13,8 +13,10 @@ import { toast } from '@/hooks/use-toast';
 import {
   Search,
   Filter,
+  Plus,
 } from 'lucide-react';
 import ReportCard from './ReportCard';
+import ReportForm from '@/components/citizen/ReportForm';
 
 interface Report {
   id: string;
@@ -86,6 +88,7 @@ export default function ReportManagement() {
   const [departmentFilter, setDepartmentFilter] = useState<string>('all');
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [categories, setCategories] = useState<any[]>([]);
+  const [isReportFormOpen, setIsReportFormOpen] = useState(false);
 
   useEffect(() => {
     fetchReports();
@@ -372,6 +375,25 @@ export default function ReportManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Actions */}
+      <div className="flex justify-end">
+        <Dialog open={isReportFormOpen} onOpenChange={setIsReportFormOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              New Report
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-lg sm:max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Create New Report</DialogTitle>
+              <DialogDescription>Register a new complaint on behalf of a citizen.</DialogDescription>
+            </DialogHeader>
+            <ReportForm onSuccess={() => { setIsReportFormOpen(false); fetchReports(); }} />
+          </DialogContent>
+        </Dialog>
+      </div>
+
       {/* Filters */}
       <Card>
         <CardHeader>

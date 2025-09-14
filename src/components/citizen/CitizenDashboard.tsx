@@ -93,7 +93,7 @@ export default function CitizenDashboard() {
       .select(`
         *,
         categories (name, color),
-        report_votes!inner (user_id)
+        report_votes (user_id)
       `)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -104,9 +104,9 @@ export default function CitizenDashboard() {
     }
 
     // Check if user has voted on each report
-    const reportsWithVotes = data?.map(report => ({
+    const reportsWithVotes = data?.map((report: any) => ({
       ...report,
-      user_voted: user ? report.report_votes.some((vote: any) => vote.user_id === user.id) : false
+      user_voted: user ? (Array.isArray(report.report_votes) && report.report_votes.some((vote: any) => vote.user_id === user.id)) : false
     })) || [];
 
     setReports(reportsWithVotes as Report[]);

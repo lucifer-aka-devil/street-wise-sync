@@ -34,28 +34,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Fetch user profile
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .single();
-          
-          setProfile(profileData as Profile);
-        } else {
-          setProfile(null);
-        }
-        
+    // Set up auth state listener FIRST (sync-only in callback)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      // Defer Supabase calls to avoid deadlocks
+      if (session?.user) {
+        setTimeout(() => {
+          (async () => {
+            try {
+              const { data: profileData } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('user_id', session.user!.id)
+                .single();
+              setProfile(profileData as Profile);
+            } catch {
+              setProfile(null);
+            } finally {
+              setLoading(false);
+            }
+          })();
+        }, 0);
+      } else {
+        setProfile(null);
         setLoading(false);
       }
-    );
+    });
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -111,56 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    // Hardcoded admin credentials
-    if (email === 'admin@civic.gov' && password === 'admin123') {
-      // Create a mock session for hardcoded admin
-      const mockUser = {
-        id: 'admin-user-id',
-        email: 'admin@civic.gov',
-        created_at: new Date().toISOString(),
-        app_metadata: {},
-        user_metadata: {},
-        aud: 'authenticated',
-        confirmation_sent_at: new Date().toISOString(),
-      } as any;
-
-      const mockSession = {
-        user: mockUser,
-        access_token: 'mock-admin-token',
-        token_type: 'bearer',
-        expires_in: 3600,
-        expires_at: Date.now() + 3600000,
-        refresh_token: 'mock-refresh-token'
-      } as any;
-
-      setUser(mockUser);
-      setSession(mockSession);
-      
-      // Set admin profile
-      const adminProfile = {
-        id: 'admin-profile-id',
-        user_id: 'admin-user-id',
-        full_name: 'System Administrator',
-        email: 'admin@civic.gov',
-        phone: null,
-        role: 'admin' as const,
-        department_id: null,
-      };
-      
-      setProfile(adminProfile);
-      
-      toast({
-        title: "Admin Login Successful",
-        description: "Welcome, Administrator!",
-      });
-
-      return { error: null };
-    }
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       toast({
