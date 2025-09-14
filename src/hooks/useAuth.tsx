@@ -122,6 +122,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    // Ensure hardcoded admin exists just-in-time
+    if (email.trim().toLowerCase() === 'admin@civic.gov' && password === 'admin123') {
+      try {
+        await supabase.functions.invoke('seed-admin');
+      } catch {}
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
