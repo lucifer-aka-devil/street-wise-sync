@@ -86,6 +86,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Seed admin account if missing (idempotent)
+  useEffect(() => {
+    supabase.functions.invoke('seed-admin').catch(() => {});
+  }, []);
+
   const signUp = async (email: string, password: string, fullName: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
