@@ -196,5 +196,5 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
-);
+  );
 }
