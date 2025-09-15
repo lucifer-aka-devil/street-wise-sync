@@ -487,7 +487,7 @@ const MapView: React.FC = () => {
             <span className="text-lg font-semibold">Interactive Map</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 h-[calc(100%-100px)]">
+        <CardContent className="p-0 h-[calc(100%-100px)] min-h-[400px] sm:min-h-[500px] lg:min-h-0">
           {/* Search Box */}
           <div className="relative p-4 border-b border-slate-200 bg-slate-50/50">
             <div className="relative">
@@ -539,7 +539,7 @@ const MapView: React.FC = () => {
           </div>
 
           {/* Map Container */}
-          <div className="h-full relative">
+          <div className="h-full min-h-[300px] sm:min-h-[400px] lg:min-h-0 relative">
             {!isMapReady && (
               <div className="absolute inset-0 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm z-10 rounded-lg">
                 <div className="text-center">
