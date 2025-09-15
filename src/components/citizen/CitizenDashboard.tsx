@@ -15,9 +15,11 @@ import {
   CheckCircle, 
   AlertCircle,
   XCircle,
-  Filter
+  Filter,
+  Map
 } from 'lucide-react';
 import ReportForm from './ReportForm';
+import CitizenMapView from './MapView';
 
 interface Report {
   id: string;
@@ -65,9 +67,9 @@ export default function CitizenDashboard() {
     fetchReports();
     fetchMyReports();
 
-    // Set up real-time subscription
+    // Set up real-time subscription for reports and votes
     const channel = supabase
-      .channel('reports-changes')
+      .channel('reports-and-votes-changes')
       .on(
         'postgres_changes',
         {
@@ -78,6 +80,17 @@ export default function CitizenDashboard() {
         () => {
           fetchReports();
           if (user) fetchMyReports();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'report_votes'
+        },
+        () => {
+          fetchReports();
         }
       )
       .subscribe();
@@ -143,6 +156,20 @@ export default function CitizenDashboard() {
       return;
     }
 
+    // Optimistically update the UI
+    setReports(prevReports => 
+      prevReports.map(report => {
+        if (report.id === reportId) {
+          return {
+            ...report,
+            user_voted: !hasVoted,
+            votes_count: hasVoted ? report.votes_count - 1 : report.votes_count + 1
+          };
+        }
+        return report;
+      })
+    );
+
     try {
       if (hasVoted) {
         // Remove vote
@@ -153,6 +180,11 @@ export default function CitizenDashboard() {
           .eq('user_id', user.id);
 
         if (error) throw error;
+        
+        toast({
+          title: "Vote removed",
+          description: "Your vote has been removed from this report.",
+        });
       } else {
         // Add vote
         const { error } = await supabase
@@ -163,15 +195,35 @@ export default function CitizenDashboard() {
           });
 
         if (error) throw error;
+        
+        toast({
+          title: "Vote added",
+          description: "Your vote has been added to this report.",
+        });
       }
 
-      // Refresh reports
-      fetchReports();
-    } catch (error) {
+      // Refresh reports to ensure consistency
+      setTimeout(() => fetchReports(), 500);
+    } catch (error: any) {
       console.error('Error voting:', error);
+      
+      // Revert optimistic update on error
+      setReports(prevReports => 
+        prevReports.map(report => {
+          if (report.id === reportId) {
+            return {
+              ...report,
+              user_voted: hasVoted,
+              votes_count: hasVoted ? report.votes_count + 1 : report.votes_count - 1
+            };
+          }
+          return report;
+        })
+      );
+      
       toast({
         title: "Error",
-        description: "There was an error processing your vote. Please try again.",
+        description: error.message || "There was an error processing your vote. Please try again.",
         variant: "destructive",
       });
     }
@@ -301,7 +353,7 @@ export default function CitizenDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-md bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
             <TabsTrigger 
               value="all" 
               className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
@@ -313,6 +365,13 @@ export default function CitizenDashboard() {
               className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
             >
               My Reports
+            </TabsTrigger>
+            <TabsTrigger 
+              value="map" 
+              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 flex items-center gap-1"
+            >
+              <Map className="h-4 w-4" />
+              Map View
             </TabsTrigger>
           </TabsList>
 
@@ -369,6 +428,12 @@ export default function CitizenDashboard() {
                 )}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="map" className="mt-6">
+            <div className="h-[600px] lg:h-[700px]">
+              <CitizenMapView />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
