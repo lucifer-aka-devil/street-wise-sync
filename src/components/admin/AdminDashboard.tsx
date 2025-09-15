@@ -8,6 +8,7 @@ import ReportManagement from './ReportManagement';
 import UserManagement from './UserManagement';
 import CategoryManagement from './CategoryManagement';
 import DepartmentManagement from './DepartmentManagement';
+import MapView from './MapView';
 import {
   ResponsiveContainer,
   PieChart,
@@ -158,7 +159,7 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="overview">
-        <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto p-1">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto p-1">
           <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">
             <span className="hidden sm:inline">Overview</span>
             <span className="sm:hidden">Stats</span>
@@ -173,6 +174,7 @@ export default function AdminDashboard() {
             <span className="hidden sm:inline">Departments</span>
             <span className="sm:hidden">Dept</span>
           </TabsTrigger>
+          <TabsTrigger value="map" className="text-xs sm:text-sm px-2 py-2">Map</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
@@ -311,6 +313,9 @@ export default function AdminDashboard() {
         <TabsContent value="users"><UserManagement /></TabsContent>
         <TabsContent value="categories"><CategoryManagement /></TabsContent>
         <TabsContent value="departments"><DepartmentManagement /></TabsContent>
+        <TabsContent value="map" className="h-[600px]">
+          <MapView />
+        </TabsContent>
       </Tabs>
     </div>
   );
