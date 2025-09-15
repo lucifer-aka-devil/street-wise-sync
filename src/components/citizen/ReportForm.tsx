@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from '@/hooks/use-toast';
 import { MapPin, Camera, Loader2, X } from 'lucide-react';
 
@@ -37,6 +38,7 @@ interface ReportFormProps {
 
 export default function ReportForm({ onSuccess }: ReportFormProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [categories, setCategories] = useState<Category[]>([]);
   const [photos, setPhotos] = useState<File[]>([]);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -86,8 +88,8 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
           console.error('Error getting location:', error);
           setGettingLocation(false);
           toast({
-            title: "Location Error",
-            description: "Could not get your current location. You can manually enter the address.",
+            title: t('report.locationError'),
+            description: t('report.locationErrorDesc'),
             variant: "destructive",
           });
         }
@@ -108,8 +110,8 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
     const files = Array.from(event.target.files || []);
     if (photos.length + files.length > 5) {
       toast({
-        title: "Too many photos",
-        description: "You can upload a maximum of 5 photos per report.",
+        title: t('report.tooManyPhotos'),
+        description: t('report.tooManyPhotosDesc'),
         variant: "destructive",
       });
       return;
@@ -175,8 +177,8 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
       if (error) throw error;
 
       toast({
-        title: "Report Submitted",
-        description: "Your report has been submitted successfully. You'll receive updates as it progresses.",
+        title: t('report.success'),
+        description: t('report.successDesc'),
       });
 
       form.reset();
@@ -186,8 +188,8 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
     } catch (error) {
       console.error('Error submitting report:', error);
       toast({
-        title: "Submission Error",
-        description: "There was an error submitting your report. Please try again.",
+        title: t('report.error'),
+        description: t('report.errorDesc'),
         variant: "destructive",
       });
     } finally {
@@ -202,10 +204,10 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
           <div className="p-2 bg-blue-100 rounded-lg">
             <MapPin className="h-5 w-5 text-blue-600" />
           </div>
-          Report an Issue
+          {t('report.title')}
         </CardTitle>
         <p className="text-sm text-slate-600 mt-2">
-          Provide detailed information to help us address the issue effectively
+          {t('report.subtitle')}
         </p>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
@@ -216,10 +218,10 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-slate-700">Issue Title</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-700">{t('report.titleLabel')}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="e.g., Pothole on Main Street" 
+                      placeholder={t('report.titlePlaceholder')} 
                       className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400"
                       {...field} 
                     />
@@ -234,10 +236,10 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-slate-700">Description</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-700">{t('report.descriptionLabel')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Please provide detailed information about the issue..."
+                      placeholder={t('report.descriptionPlaceholder')}
                       className="min-h-[120px] bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400 resize-none"
                       {...field}
                     />
@@ -253,11 +255,11 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
                 name="category_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium text-slate-700">Category</FormLabel>
+                    <FormLabel className="text-sm font-medium text-slate-700">{t('report.categoryLabel')}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400">
-                          <SelectValue placeholder="Select category" />
+                          <SelectValue placeholder={t('report.categoryPlaceholder')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -284,7 +286,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium text-slate-700">Priority</FormLabel>
+                    <FormLabel className="text-sm font-medium text-slate-700">{t('report.priorityLabel')}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400">
@@ -295,25 +297,25 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
                         <SelectItem value="low">
                           <span className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            Low Priority
+                            {t('priority.low')}
                           </span>
                         </SelectItem>
                         <SelectItem value="medium">
                           <span className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                            Medium Priority
+                            {t('priority.medium')}
                           </span>
                         </SelectItem>
                         <SelectItem value="high">
                           <span className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                            High Priority
+                            {t('priority.high')}
                           </span>
                         </SelectItem>
                         <SelectItem value="urgent">
                           <span className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                            Urgent
+                            {t('priority.urgent')}
                           </span>
                         </SelectItem>
                       </SelectContent>
@@ -329,11 +331,11 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-slate-700">Address</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-700">{t('report.locationLabel')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input 
-                        placeholder="Enter address or use current location"
+                        placeholder={t('report.locationPlaceholder')}
                         className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400 pr-12"
                         {...field}
                       />
@@ -360,8 +362,8 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
 
             <div className="space-y-4">
               <div>
-                <Label className="text-sm font-medium text-slate-700">Photos (Optional)</Label>
-                <p className="text-xs text-slate-500 mt-1">Add up to 5 photos to help illustrate the issue</p>
+                <Label className="text-sm font-medium text-slate-700">{t('report.photosLabel')}</Label>
+                <p className="text-xs text-slate-500 mt-1">{t('report.photosDesc')}</p>
                 <div className="mt-3">
                   <Input
                     type="file"
@@ -378,7 +380,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
                     className="w-full bg-white/80 border-slate-200 hover:bg-blue-50 hover:border-blue-300 transition-colors"
                   >
                     <Camera className="mr-2 h-4 w-4 text-blue-600" />
-                    Add Photos ({photos.length}/5)
+                    {t('report.uploadPhotos')} ({photos.length}/5)
                   </Button>
                 </div>
               </div>
@@ -416,12 +418,12 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               {uploading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Submitting Report...
+                  {t('report.submitting')}
                 </>
               ) : (
                 <>
                   <MapPin className="mr-2 h-5 w-5" />
-                  Submit Report
+                  {t('report.submitReport')}
                 </>
               )}
             </Button>

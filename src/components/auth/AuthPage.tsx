@@ -5,11 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { Loader2, MapPin, Users, AlertTriangle } from 'lucide-react';
 import AdminInfo from '@/components/AdminInfo';
 
 export default function AuthPage() {
   const { signIn, signUp, loading } = useAuth();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,6 +42,11 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      {/* Language Selector - Fixed position */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSelector />
+      </div>
+      
       <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         {/* Left side - Branding & Features */}
         <div className="space-y-8 text-center lg:text-left order-2 lg:order-1">
@@ -62,7 +70,7 @@ export default function AuthPage() {
             
             <div className="max-w-2xl mx-auto lg:mx-0">
               <p className="text-lg sm:text-xl text-slate-600 leading-relaxed">
-                Official platform for citizens to report civic issues and track their resolution with transparency and efficiency
+                {t('auth.subtitle')}
               </p>
             </div>
           </div>
@@ -74,8 +82,8 @@ export default function AuthPage() {
                 <MapPin className="h-6 w-6 text-blue-600" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold text-slate-800 text-lg">Location-Based Reporting</h3>
-                <p className="text-slate-600 mt-1">Report issues exactly where they occur with precise GPS coordinates</p>
+                <h3 className="font-semibold text-slate-800 text-lg">{t('auth.locationTitle')}</h3>
+                <p className="text-slate-600 mt-1">{t('auth.locationDesc')}</p>
               </div>
             </div>
 
@@ -84,8 +92,8 @@ export default function AuthPage() {
                 <Users className="h-6 w-6 text-green-600" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold text-slate-800 text-lg">Community Engagement</h3>
-                <p className="text-slate-600 mt-1">Vote on issues that matter to you and engage with your community</p>
+                <h3 className="font-semibold text-slate-800 text-lg">{t('auth.communityTitle')}</h3>
+                <p className="text-slate-600 mt-1">{t('auth.communityDesc')}</p>
               </div>
             </div>
 
@@ -94,8 +102,8 @@ export default function AuthPage() {
                 <AlertTriangle className="h-6 w-6 text-amber-600" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold text-slate-800 text-lg">Real-Time Tracking</h3>
-                <p className="text-slate-600 mt-1">Follow your reports from submission to resolution with live updates</p>
+                <h3 className="font-semibold text-slate-800 text-lg">{t('auth.trackingTitle')}</h3>
+                <p className="text-slate-600 mt-1">{t('auth.trackingDesc')}</p>
               </div>
             </div>
           </div>
@@ -106,37 +114,37 @@ export default function AuthPage() {
           <AdminInfo />
           <Card className="w-full max-w-md mx-auto lg:max-w-lg bg-white/80 backdrop-blur-sm border-0 shadow-xl">
             <CardHeader className="space-y-2 pb-6">
-              <CardTitle className="text-2xl font-bold text-center text-slate-800">Welcome Back</CardTitle>
+              <CardTitle className="text-2xl font-bold text-center text-slate-800">{t('auth.welcome')}</CardTitle>
               <CardDescription className="text-center text-slate-600 text-base">
-                Sign in to your account or create a new one to start reporting civic issues
+                {t('auth.welcomeDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <Tabs defaultValue="signin" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 bg-slate-100 p-1">
                   <TabsTrigger value="signin" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                    Sign In
+                    {t('auth.signIn')}
                   </TabsTrigger>
                   <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                    Sign Up
+                    {t('auth.signUp')}
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="signin" className="space-y-4 mt-6">
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signin-email" className="text-slate-700 font-medium">Email Address</Label>
+                      <Label htmlFor="signin-email" className="text-slate-700 font-medium">{t('auth.email')}</Label>
                       <Input
                         id="signin-email"
                         name="email"
                         type="email"
-                        placeholder="your@email.com"
+                        placeholder={t('auth.emailPlaceholder')}
                         required
                         className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signin-password" className="text-slate-700 font-medium">Password</Label>
+                      <Label htmlFor="signin-password" className="text-slate-700 font-medium">{t('auth.password')}</Label>
                       <Input
                         id="signin-password"
                         name="password"
@@ -153,10 +161,10 @@ export default function AuthPage() {
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Signing in...
+                          {t('auth.signingIn')}
                         </>
                       ) : (
-                        'Sign In'
+                        t('auth.signInButton')
                       )}
                     </Button>
                   </form>
@@ -165,36 +173,36 @@ export default function AuthPage() {
                 <TabsContent value="signup" className="space-y-4 mt-6">
                   <form onSubmit={handleSignUp} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signup-name" className="text-slate-700 font-medium">Full Name</Label>
+                      <Label htmlFor="signup-name" className="text-slate-700 font-medium">{t('auth.fullName')}</Label>
                       <Input
                         id="signup-name"
                         name="fullName"
                         type="text"
-                        placeholder="John Doe"
+                        placeholder={t('auth.fullNamePlaceholder')}
                         required
                         className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="text-slate-700 font-medium">Email Address</Label>
+                      <Label htmlFor="signup-email" className="text-slate-700 font-medium">{t('auth.email')}</Label>
                       <Input
                         id="signup-email"
                         name="email"
                         type="email"
-                        placeholder="your@email.com"
+                        placeholder={t('auth.emailPlaceholder')}
                         required
                         className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-slate-700 font-medium">Password</Label>
+                      <Label htmlFor="signup-password" className="text-slate-700 font-medium">{t('auth.password')}</Label>
                       <Input
                         id="signup-password"
                         name="password"
                         type="password"
                         required
                         minLength={6}
-                        placeholder="Minimum 6 characters"
+                        placeholder={t('auth.passwordPlaceholder')}
                         className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
@@ -206,10 +214,10 @@ export default function AuthPage() {
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating account...
+                          {t('auth.creatingAccount')}
                         </>
                       ) : (
-                        'Create Account'
+                        t('auth.signUpButton')
                       )}
                     </Button>
                   </form>
