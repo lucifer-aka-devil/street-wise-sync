@@ -476,32 +476,34 @@ const MapView: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex gap-4">
+    <div className="h-full flex flex-col lg:flex-row gap-4 lg:gap-6">
       {/* Left Half - Map */}
-      <Card className="w-1/2 h-full">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Map View
+      <Card className="w-full lg:w-1/2 h-full bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+        <CardHeader className="pb-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+          <CardTitle className="flex items-center gap-3 text-slate-800">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <MapPin className="h-5 w-5 text-blue-600" />
+            </div>
+            <span className="text-lg font-semibold">Interactive Map</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 h-[calc(100%-80px)]">
+        <CardContent className="p-0 h-[calc(100%-100px)]">
           {/* Search Box */}
-          <div className="relative p-4 border-b">
+          <div className="relative p-4 border-b border-slate-200 bg-slate-50/50">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 type="text"
                 placeholder="Search for a location..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="pl-10 pr-10"
+                className="pl-10 pr-10 h-11 bg-white/80 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
               />
               {searchQuery && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-9 w-9 p-0 hover:bg-slate-100 rounded-lg"
                   onClick={clearSearch}
                 >
                   ×
@@ -511,14 +513,14 @@ const MapView: React.FC = () => {
 
             {/* Search Results Dropdown */}
             {showSearchResults && searchResults.length > 0 && (
-              <div className="absolute top-full left-4 right-4 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-4 right-4 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
                 {searchResults.map((result) => (
                   <div
                     key={result.place_id}
-                    className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                    className="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 last:border-b-0 transition-colors"
                     onClick={() => handleSearchResultClick(result)}
                   >
-                    <div className="text-sm font-medium text-gray-900 truncate">
+                    <div className="text-sm font-medium text-slate-800 truncate">
                       {result.display_name}
                     </div>
                   </div>
@@ -527,8 +529,11 @@ const MapView: React.FC = () => {
             )}
 
             {isSearching && (
-              <div className="absolute top-full left-4 right-4 bg-white border border-gray-200 rounded-md shadow-lg z-50 p-3">
-                <div className="text-sm text-gray-500">Searching...</div>
+              <div className="absolute top-full left-4 right-4 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-lg shadow-xl z-50 p-3">
+                <div className="text-sm text-slate-600 flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  Searching...
+                </div>
               </div>
             )}
           </div>
@@ -536,40 +541,48 @@ const MapView: React.FC = () => {
           {/* Map Container */}
           <div className="h-full relative">
             {!isMapReady && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm z-10 rounded-lg">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                  <p className="text-sm text-gray-600">Loading map...</p>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-slate-600 font-medium">Loading interactive map...</p>
                 </div>
               </div>
             )}
-            <div ref={mapContainer} className="h-full w-full" />
+            <div ref={mapContainer} className="h-full w-full rounded-lg" />
           </div>
 
           {/* Map Info */}
-          <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 rounded-md p-2 text-xs text-gray-600 shadow-md">
-            <div>Reports with location: {markers.filter(m => m.type === 'report').length}</div>
-            <div>Total markers: {markers.length}</div>
+          <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 text-xs text-slate-600 shadow-lg border border-white/20">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="font-medium">Reports with location: {markers.filter(m => m.type === 'report').length}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span>Total markers: {markers.length}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Right Half - Reports List */}
-      <Card className="w-1/2 h-full">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Reports ({filteredReports.length})
+      <Card className="w-full lg:w-1/2 h-full bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+        <CardHeader className="pb-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-lg">
+          <CardTitle className="flex items-center gap-3 text-slate-800">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Filter className="h-5 w-5 text-green-600" />
+            </div>
+            <span className="text-lg font-semibold">Reports ({filteredReports.length})</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 h-[calc(100%-80px)] flex flex-col">
+        <CardContent className="p-4 h-[calc(100%-100px)] flex flex-col">
           {/* Filters */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-8">
-                <SelectValue placeholder="Status" />
+              <SelectTrigger className="h-10 bg-white/80 border-slate-200 focus:border-blue-500">
+                <SelectValue placeholder="Filter by Status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white/95 backdrop-blur-sm">
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="submitted">Submitted</SelectItem>
                 <SelectItem value="acknowledged">Acknowledged</SelectItem>
@@ -580,10 +593,10 @@ const MapView: React.FC = () => {
             </Select>
 
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-8">
-                <SelectValue placeholder="Category" />
+              <SelectTrigger className="h-10 bg-white/80 border-slate-200 focus:border-blue-500">
+                <SelectValue placeholder="Filter by Category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white/95 backdrop-blur-sm">
                 <SelectItem value="all">All Categories</SelectItem>
                 {getUniqueCategories().map(category => (
                   <SelectItem key={category} value={category}>{category}</SelectItem>
@@ -592,10 +605,10 @@ const MapView: React.FC = () => {
             </Select>
 
             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="h-8">
-                <SelectValue placeholder="Priority" />
+              <SelectTrigger className="h-10 bg-white/80 border-slate-200 focus:border-blue-500">
+                <SelectValue placeholder="Filter by Priority" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white/95 backdrop-blur-sm">
                 <SelectItem value="all">All Priorities</SelectItem>
                 {getUniquePriorities().map(priority => (
                   <SelectItem key={priority} value={priority}>{priority}</SelectItem>
@@ -605,73 +618,83 @@ const MapView: React.FC = () => {
           </div>
 
           {/* Reports List */}
-          <div className="flex-1 overflow-y-auto space-y-2">
+          <div className="flex-1 overflow-y-auto space-y-3">
             {loading ? (
               <div className="flex items-center justify-center h-32">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-3"></div>
+                  <p className="text-slate-600">Loading reports...</p>
+                </div>
               </div>
             ) : filteredReports.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">
-                No reports found matching the selected filters.
+              <div className="text-center text-slate-500 py-12">
+                <Filter className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+                <p className="text-lg font-medium mb-2">No reports found</p>
+                <p className="text-sm">Try adjusting your filters to see more results.</p>
               </div>
             ) : (
               filteredReports.map((report) => (
                 <div
                   key={report.id}
-                  className={`p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
-                    selectedReport === report.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                  className={`p-4 border rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${
+                    selectedReport === report.id 
+                      ? 'border-blue-500 bg-blue-50/80 shadow-md' 
+                      : 'border-slate-200 bg-white/60 hover:bg-white/80'
                   }`}
                   onClick={() => handleReportSelect(report.id)}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="font-medium text-sm text-gray-900 truncate flex-1 mr-2">
+                  <div className="flex items-start justify-between mb-3">
+                    <h4 className="font-semibold text-slate-800 truncate flex-1 mr-3 text-sm">
                       {report.title}
                     </h4>
                     <Badge 
                       variant="outline" 
-                      className="text-xs"
+                      className="text-xs font-medium px-2 py-1"
                       style={{ 
-                        backgroundColor: `${getStatusColor(report.status)}20`,
+                        backgroundColor: `${getStatusColor(report.status)}15`,
                         borderColor: getStatusColor(report.status),
                         color: getStatusColor(report.status)
                       }}
                     >
-                      {report.status}
+                      {report.status.replace('_', ' ')}
                     </Badge>
                   </div>
                   
-                  <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                  <p className="text-xs text-slate-600 mb-3 line-clamp-2 leading-relaxed">
                     {report.description}
                   </p>
                   
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
                       {report.categories && (
-                        <span className="bg-gray-100 px-2 py-1 rounded">
+                        <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-md font-medium">
                           {report.categories.name}
                         </span>
                       )}
                       {report.priority && (
-                        <span className={`px-2 py-1 rounded ${
+                        <span className={`px-2 py-1 rounded-md font-medium ${
                           report.priority === 'high' ? 'bg-red-100 text-red-700' :
-                          report.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                          report.priority === 'medium' ? 'bg-amber-100 text-amber-700' :
                           'bg-green-100 text-green-700'
                         }`}>
                           {report.priority}
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2 text-slate-500">
                       {report.latitude && report.longitude && (
-                        <MapPin className="h-3 w-3 text-green-600" />
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-green-600" />
+                          <span className="text-green-600 font-medium">Located</span>
+                        </div>
                       )}
                       <span>{new Date(report.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                   
                   {report.profiles && (
-                    <div className="mt-2 text-xs text-gray-500">
-                      By: {report.profiles.full_name}
+                    <div className="mt-3 pt-2 border-t border-slate-200 text-xs text-slate-500">
+                      <span className="font-medium">Reported by:</span> {report.profiles.full_name}
                     </div>
                   )}
                 </div>
