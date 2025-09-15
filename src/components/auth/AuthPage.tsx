@@ -61,6 +61,27 @@ export default function AuthPage() {
     </p>
   </div>
 </div>
+       {/* Left side - Branding */}
+<div className="space-y-6 text-center md:text-left">
+  <div className="space-y-4">
+    <div className="flex items-center justify-center md:justify-start gap-3">
+      <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden">
+        <img
+          src="/logo.png"   // <- replace with actual logo path
+          alt="Jharkhand Government Logo"
+          className="w-full h-full object-contain"
+        />
+      </div>
+      <div>
+        <h1 className="text-3xl md:text-4xl font-bold text-primary">Government of Jharkhand</h1>
+        <p className="text-lg text-muted-foreground">Civic Reporting Portal</p>
+      </div>
+    </div>
+    <p className="text-xl text-muted-foreground">
+      Official platform for citizens to report civic issues and track their resolution
+    </p>
+  </div>
+</div>
 
           <div className="grid grid-cols-1 gap-4">
             <div className="flex items-center gap-3">
@@ -195,6 +216,5 @@ export default function AuthPage() {
         </Card>
         </div>
       </div>
-    </div>
   );
 }
