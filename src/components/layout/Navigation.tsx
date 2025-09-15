@@ -21,22 +21,22 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
   const { t } = useLanguage();
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-18">
+    <nav className="bg-white/90 backdrop-blur-lg shadow-soft border-b border-white/30 sticky top-0 z-50 animate-fade-in">
+      <div className="container-responsive">
+        <div className="flex justify-between items-center h-16 sm:h-20">
           {/* Logo and Brand - Enhanced */}
           <div className="flex items-center space-x-4 sm:space-x-8 min-w-0">
             <div className="flex items-center min-w-0">
               <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0 shadow-lg">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-sm sm:text-lg flex-shrink-0 shadow-glow hover:shadow-xl transition-all duration-300 hover:scale-105">
                   JH
                 </div>
                 <div className="min-w-0">
-                  <h1 className="text-base sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
+                  <h1 className="text-responsive-md font-bold text-heading truncate">
                     <span className="hidden sm:inline">Government of Jharkhand</span>
                     <span className="sm:hidden">Jharkhand Gov</span>
                   </h1>
-                  <p className="text-xs sm:text-sm text-slate-600 hidden sm:block font-medium">{t('nav.portal')}</p>
+                  <p className="text-xs sm:text-sm text-body hidden sm:block font-medium">{t('nav.portal')}</p>
                 </div>
               </div>
             </div>
@@ -47,10 +47,10 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                 <Button
                   variant={currentView === 'citizen' ? 'default' : 'ghost'}
                   onClick={() => onViewChange('citizen')}
-                  className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-2 text-sm font-medium transition-all duration-300 touch-target ${
                     currentView === 'citizen' 
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl' 
-                      : 'hover:bg-blue-50 hover:text-blue-600'
+                      ? 'btn-primary shadow-glow scale-105' 
+                      : 'hover:bg-blue-50 hover:text-blue-600 hover:scale-105'
                   }`}
                   size="sm"
                 >
@@ -63,10 +63,10 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   <Button
                     variant={currentView === 'admin' ? 'default' : 'ghost'}
                     onClick={() => onViewChange('admin')}
-                    className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+                    className={`flex items-center gap-2 text-sm font-medium transition-all duration-300 touch-target ${
                       currentView === 'admin' 
-                        ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg hover:shadow-xl' 
-                        : 'hover:bg-emerald-50 hover:text-emerald-600'
+                        ? 'btn-success shadow-glow-green scale-105' 
+                        : 'hover:bg-emerald-50 hover:text-emerald-600 hover:scale-105'
                     }`}
                     size="sm"
                   >
@@ -82,21 +82,23 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
           {/* User Info and Actions - Enhanced */}
           <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
             {/* Language Selector */}
-            <LanguageSelector />
+            <div className="animate-fade-in">
+              <LanguageSelector />
+            </div>
             {user ? (
               <>
                 {/* User Info - Enhanced */}
-                <div className="hidden sm:flex items-center space-x-3 text-sm min-w-0">
-                  <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="h-4 w-4 text-white" />
+                <div className="hidden sm:flex items-center space-x-3 text-sm min-w-0 animate-slide-up">
+                  <div className="flex items-center gap-3 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl px-4 py-2 shadow-soft hover:shadow-medium transition-all duration-300">
+                    <div className="w-10 h-10 bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <User className="h-5 w-5 text-white" />
                     </div>
                     <div className="min-w-0">
-                      <div className="truncate max-w-[120px] md:max-w-none font-medium text-slate-800">
+                      <div className="truncate max-w-[120px] md:max-w-none font-semibold text-slate-800">
                         {profile?.full_name || user.email}
                       </div>
                       {profile?.role && profile.role !== 'citizen' && (
-                        <div className="text-xs text-slate-500 hidden md:block capitalize">
+                        <div className="text-xs text-slate-500 hidden md:block capitalize font-medium">
                           {profile.role}
                         </div>
                       )}
@@ -105,9 +107,9 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                 </div>
                 
                 {/* Mobile User Icon */}
-                <div className="sm:hidden flex items-center">
-                  <div className="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                <div className="sm:hidden flex items-center animate-fade-in">
+                  <div className="w-10 h-10 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center shadow-soft">
+                    <User className="h-5 w-5 text-white" />
                   </div>
                 </div>
                 
@@ -115,14 +117,14 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   variant="outline"
                   size="sm"
                   onClick={signOut}
-                  className="flex items-center gap-2 border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-200"
+                  className="flex items-center gap-2 border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300 touch-target hover:scale-105 shadow-sm hover:shadow-md"
                 >
                   <LogOut className="h-4 w-4" />
                   <span className="hidden sm:inline font-medium">{t('nav.signOut')}</span>
                 </Button>
               </>
             ) : (
-              <div className="text-sm text-slate-600 hidden sm:block bg-slate-50 px-4 py-2 rounded-lg">
+              <div className="text-sm text-body hidden sm:block bg-gradient-to-r from-slate-50 to-slate-100 px-4 py-2 rounded-xl shadow-soft animate-fade-in">
                 {t('nav.signInPrompt')}
               </div>
             )}
@@ -131,15 +133,15 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
         
         {/* Mobile Navigation Menu - Enhanced */}
         {user && (
-          <div className="md:hidden border-t border-slate-200 pt-3 pb-3 bg-slate-50/50">
+          <div className="md:hidden border-t border-slate-200/50 pt-4 pb-4 bg-gradient-to-r from-slate-50/80 to-white/80 backdrop-blur-sm animate-slide-up">
             <div className="flex space-x-3">
               <Button
                 variant={currentView === 'citizen' ? 'default' : 'ghost'}
                 onClick={() => onViewChange('citizen')}
-                className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-300 touch-target ${
                   currentView === 'citizen' 
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md' 
-                    : 'hover:bg-blue-50 hover:text-blue-600'
+                    ? 'btn-primary shadow-glow' 
+                    : 'hover:bg-blue-50 hover:text-blue-600 hover:scale-105'
                 }`}
                 size="sm"
               >
@@ -151,10 +153,10 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                 <Button
                   variant={currentView === 'admin' ? 'default' : 'ghost'}
                   onClick={() => onViewChange('admin')}
-                  className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-300 touch-target ${
                     currentView === 'admin' 
-                      ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md' 
-                      : 'hover:bg-emerald-50 hover:text-emerald-600'
+                      ? 'btn-success shadow-glow-green' 
+                      : 'hover:bg-emerald-50 hover:text-emerald-600 hover:scale-105'
                   }`}
                   size="sm"
                 >

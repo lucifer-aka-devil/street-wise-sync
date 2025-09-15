@@ -17,7 +17,8 @@ import {
   AlertCircle,
   XCircle,
   Filter,
-  Map
+  Map,
+  User
 } from 'lucide-react';
 import ReportForm from './ReportForm';
 import CitizenMapView from './MapView';
@@ -238,67 +239,67 @@ export default function CitizenDashboard() {
     const StatusIcon = statusConfig[report.status].icon;
     
     return (
-      <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-        <CardHeader className="pb-4">
+      <Card className="card-interactive rounded-2xl overflow-hidden shadow-medium hover:shadow-large border-0 transition-all duration-300 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
+        <CardHeader className="pb-4 bg-gradient-to-r from-white/50 to-slate-50/50">
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-start gap-3">
+            <div className="flex justify-between items-start gap-4">
               <div className="space-y-2 min-w-0 flex-1">
-                <CardTitle className="text-lg font-semibold text-slate-800 leading-tight">{report.title}</CardTitle>
+                <CardTitle className="text-lg sm:text-xl font-bold text-slate-800 leading-tight line-clamp-2">{report.title}</CardTitle>
                 <CardDescription className="flex items-center gap-2 text-sm text-slate-600">
-                  <MapPin className="h-4 w-4 flex-shrink-0 text-green-600" />
+                  <MapPin className="h-4 w-4 flex-shrink-0 text-emerald-600" />
                   <span className="truncate">{report.address || t('citizen.locationNotSpecified')}</span>
                 </CardDescription>
               </div>
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${statusConfig[report.status].color}`}></div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <div className={`w-4 h-4 rounded-full ${statusConfig[report.status].color} shadow-sm animate-pulse`}></div>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1">
+              <Badge variant="outline" className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 bg-white/80 hover:bg-white transition-colors">
                 <div 
-                  className="w-2 h-2 rounded-full flex-shrink-0" 
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm" 
                   style={{ backgroundColor: report.categories?.color }}
                 />
-                <span>{report.categories?.name}</span>
+                <span className="font-medium">{report.categories?.name}</span>
               </Badge>
               <Badge 
-                className={`${priorityConfig[report.priority].color} text-white text-xs font-medium px-2.5 py-1`}
+                className={`${priorityConfig[report.priority].color} text-white text-xs font-semibold px-3 py-1.5 shadow-sm hover:shadow-md transition-all`}
               >
                 {priorityConfig[report.priority].label}
               </Badge>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pt-0 space-y-4">
-          <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed">{report.description}</p>
+        <CardContent className="pt-0 space-y-5">
+          <p className="text-sm text-body line-clamp-3 leading-relaxed">{report.description}</p>
           
           {report.photos && report.photos.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {report.photos.slice(0, 3).map((photo, index) => (
                 <img
                   key={index}
                   src={photo}
                   alt={`Report photo ${index + 1}`}
-                  className="w-full h-20 object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  className="w-full h-24 object-cover rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer hover:scale-105"
                   loading="lazy"
                 />
               ))}
               {report.photos.length > 3 && (
-                <div className="w-full h-20 bg-slate-100 rounded-lg flex items-center justify-center text-xs text-slate-500 font-medium">
+                <div className="w-full h-24 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-600 font-semibold hover:from-slate-200 hover:to-slate-300 transition-colors cursor-pointer">
                   +{report.photos.length - 3} more
                 </div>
               )}
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+          <div className="flex items-center justify-between pt-3 border-t border-slate-200/60">
             <div className="flex items-center gap-4 text-xs text-slate-500">
               <div className="flex items-center gap-1.5">
-                <StatusIcon className="h-4 w-4" />
+                <StatusIcon className="h-4 w-4 text-slate-600" />
                 <span className="font-medium">{statusConfig[report.status].label}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4" />
+                <Clock className="h-4 w-4 text-slate-600" />
                 <span>{new Date(report.created_at).toLocaleDateString()}</span>
               </div>
             </div>
@@ -306,14 +307,14 @@ export default function CitizenDashboard() {
               variant="ghost"
               size="sm"
               onClick={() => handleVote(report.id, report.user_voted || false)}
-              className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2 text-sm font-semibold transition-all duration-300 touch-target hover:scale-105 rounded-xl px-4 py-2 ${
                 report.user_voted 
-                  ? 'text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100' 
-                  : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 shadow-sm' 
+                  : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-md'
               }`}
             >
               <ThumbsUp className="h-4 w-4" />
-              {report.votes_count}
+              <span className="font-bold">{report.votes_count}</span>
             </Button>
           </div>
         </CardContent>
@@ -323,32 +324,39 @@ export default function CitizenDashboard() {
 
   if (showReportForm) {
     return (
-      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
-        <div className="mb-4 sm:mb-6">
-          <Button variant="outline" onClick={() => setShowReportForm(false)} size="sm">
+      <div className="container-responsive py-6 animate-fade-in">
+        <div className="mb-6 animate-slide-up">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowReportForm(false)} 
+            className="hover:scale-105 transition-all duration-200"
+            size="sm"
+          >
             {t('citizen.backToDashboard')}
           </Button>
         </div>
-        <ReportForm onSuccess={() => setShowReportForm(false)} />
+        <div className="animate-scale-in">
+          <ReportForm onSuccess={() => setShowReportForm(false)} />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 sm:mb-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 animate-fade-in">
+      <div className="container-responsive py-6 sm:py-8 lg:py-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 sm:mb-12 animate-slide-up">
           <div className="min-w-0 flex-1">
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-responsive-lg font-bold text-heading mb-3">
               {t('citizen.title')}
             </h1>
-            <p className="text-base sm:text-lg text-slate-600">
+            <p className="text-responsive-sm text-body max-w-2xl">
               {t('citizen.subtitle')}
             </p>
           </div>
           <Button 
             onClick={() => setShowReportForm(true)}
-            className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+            className="w-full sm:w-auto btn-primary touch-target hover:scale-105 shadow-glow"
             size="lg"
           >
             <Plus className="mr-2 h-5 w-5" />
@@ -357,68 +365,80 @@ export default function CitizenDashboard() {
           </Button>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-slide-up">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg bg-white/80 backdrop-blur-sm border border-white/30 shadow-soft rounded-xl">
             <TabsTrigger 
               value="all" 
-              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
+              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 rounded-lg transition-all duration-200"
             >
               {t('citizen.allReports')}
             </TabsTrigger>
             <TabsTrigger 
               value="mine" 
-              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
+              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 rounded-lg transition-all duration-200"
             >
               {t('citizen.myReports')}
             </TabsTrigger>
             <TabsTrigger 
               value="map" 
-              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 flex items-center gap-1"
+              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 flex items-center gap-1 rounded-lg transition-all duration-200"
             >
               <Map className="h-4 w-4" />
-              {t('citizen.mapView')}
+              <span className="hidden sm:inline">{t('citizen.mapView')}</span>
+              <span className="sm:hidden">Map</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all" className="mt-6 space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <TabsContent value="all" className="mt-8 space-y-6 animate-fade-in">
+            <div className="grid-responsive">
               {loading ? (
-                <div className="col-span-full flex items-center justify-center py-16">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-slate-600">{t('citizen.loading')}</p>
+                <div className="col-span-full flex items-center justify-center py-20">
+                  <div className="text-center animate-pulse">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-spin">
+                      <div className="w-8 h-8 bg-white rounded-full"></div>
+                    </div>
+                    <p className="text-body text-lg">{t('citizen.loading')}</p>
                   </div>
                 </div>
               ) : reports.length === 0 ? (
-                <div className="col-span-full text-center py-16">
-                  <Filter className="h-16 w-16 mx-auto mb-4 text-slate-300" />
-                  <p className="text-lg font-medium text-slate-600 mb-2">{t('citizen.noReports')}</p>
-                  <p className="text-slate-500">{t('citizen.noReportsDesc')}</p>
+                <div className="col-span-full text-center py-20 animate-scale-in">
+                  <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                    <Filter className="h-12 w-12 text-slate-400" />
+                  </div>
+                  <p className="text-lg font-semibold text-slate-700 mb-3">{t('citizen.noReports')}</p>
+                  <p className="text-body max-w-md mx-auto">{t('citizen.noReportsDesc')}</p>
                 </div>
               ) : (
-                reports.map((report) => (
-                  <ReportCard key={report.id} report={report} />
+                reports.map((report, index) => (
+                  <div key={report.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <ReportCard report={report} />
+                  </div>
                 ))
               )}
             </div>
           </TabsContent>
 
-          <TabsContent value="mine" className="mt-6 space-y-6">
+          <TabsContent value="mine" className="mt-8 space-y-6 animate-fade-in">
             {!user ? (
-              <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-lg">
-                <CardContent className="pt-8 text-center">
-                  <p className="text-slate-600 text-lg">{t('citizen.signInToView')}</p>
-                </CardContent>
-              </Card>
+              <div className="card-elevated rounded-2xl">
+                <div className="pt-12 pb-8 text-center">
+                  <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                    <User className="h-10 w-10 text-blue-600" />
+                  </div>
+                  <p className="text-body text-xl font-medium">{t('citizen.signInToView')}</p>
+                </div>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid-responsive">
                 {myReports.length === 0 ? (
-                  <div className="col-span-full text-center py-16">
-                    <Plus className="h-16 w-16 mx-auto mb-4 text-slate-300" />
-                    <p className="text-lg font-medium text-slate-600 mb-2">{t('citizen.noMyReports')}</p>
-                    <p className="text-slate-500 mb-6">{t('citizen.noMyReportsDesc')}</p>
+                  <div className="col-span-full text-center py-20 animate-scale-in">
+                    <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                      <Plus className="h-12 w-12 text-green-600" />
+                    </div>
+                    <p className="text-lg font-semibold text-slate-700 mb-3">{t('citizen.noMyReports')}</p>
+                    <p className="text-body mb-8 max-w-md mx-auto">{t('citizen.noMyReportsDesc')}</p>
                     <Button 
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200" 
+                      className="btn-success touch-target hover:scale-105 shadow-glow-green" 
                       onClick={() => setShowReportForm(true)}
                       size="lg"
                     >
@@ -427,16 +447,18 @@ export default function CitizenDashboard() {
                     </Button>
                   </div>
                 ) : (
-                  myReports.map((report) => (
-                    <ReportCard key={report.id} report={report} />
+                  myReports.map((report, index) => (
+                    <div key={report.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                      <ReportCard report={report} />
+                    </div>
                   ))
                 )}
               </div>
             )}
           </TabsContent>
 
-          <TabsContent value="map" className="mt-6">
-            <div className="h-[600px] lg:h-[700px]">
+          <TabsContent value="map" className="mt-8 animate-fade-in">
+            <div className="h-[500px] sm:h-[600px] lg:h-[700px] rounded-2xl overflow-hidden shadow-large">
               <CitizenMapView />
             </div>
           </TabsContent>
