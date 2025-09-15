@@ -102,14 +102,9 @@ interface Report {
     full_name: string;
     email: string;
   } | null;
-  assigned_user: {
-    user_id: string;
-    full_name: string;
-    email: string;
-  } | null;
 }
 
-const MapView: React.FC = () => {
+const CitizenMapView: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -125,7 +120,6 @@ const MapView: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
   const [markers, setMarkers] = useState<MarkerData[]>([]);
@@ -133,7 +127,7 @@ const MapView: React.FC = () => {
   // Fetch reports data
   const fetchReports = useCallback(async () => {
     try {
-      // First get all reports
+      // Get all reports
       const { data: reportsData, error: reportsError } = await supabase
         .from('reports')
         .select('*')
@@ -166,7 +160,6 @@ const MapView: React.FC = () => {
         categories: categoriesData?.find(cat => cat.id === report.category_id) || null,
         departments: departmentsData?.find(dept => dept.id === report.department_id) || null,
         profiles: profilesData?.find(profile => profile.user_id === report.user_id) || null,
-        assigned_user: profilesData?.find(profile => profile.user_id === report.assigned_to) || null
       }));
 
       setReports(enrichedReports as unknown as Report[]);
@@ -240,12 +233,8 @@ const MapView: React.FC = () => {
       filtered = filtered.filter(report => report.categories?.name === categoryFilter);
     }
 
-    if (priorityFilter !== 'all') {
-      filtered = filtered.filter(report => report.priority === priorityFilter);
-    }
-
     setFilteredReports(filtered);
-  }, [reports, statusFilter, categoryFilter, priorityFilter]);
+  }, [reports, statusFilter, categoryFilter]);
 
   // Handle report selection
   const handleReportSelect = (reportId: string) => {
@@ -265,13 +254,6 @@ const MapView: React.FC = () => {
       .map(report => report.categories?.name)
       .filter(Boolean);
     return [...new Set(categories)];
-  };
-
-  const getUniquePriorities = () => {
-    const priorities = reports
-      .map(report => report.priority)
-      .filter(Boolean);
-    return [...new Set(priorities)];
   };
 
   // Update markers when filtered reports change
@@ -379,7 +361,7 @@ const MapView: React.FC = () => {
           </div>
         `;
       } else {
-        // For non-report markers, access properties directly from markerData
+        // For non-report markers
         const title = markerData.type === 'search' ? 'Search Result' : 'Custom Location';
         const description = markerData.type === 'search' ? 'Search location' : 'Manual marker';
         
@@ -484,7 +466,7 @@ const MapView: React.FC = () => {
             <div className="p-2 bg-blue-100 rounded-lg">
               <MapPin className="h-5 w-5 text-blue-600" />
             </div>
-            <span className="text-lg font-semibold">Interactive Map</span>
+            <span className="text-lg font-semibold">Community Map</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 h-[calc(100%-100px)] min-h-[400px] sm:min-h-[500px] lg:min-h-0">
@@ -544,7 +526,7 @@ const MapView: React.FC = () => {
               <div className="absolute inset-0 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm z-10 rounded-lg">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-slate-600 font-medium">Loading interactive map...</p>
+                  <p className="text-slate-600 font-medium">Loading community map...</p>
                 </div>
               </div>
             )}
@@ -555,11 +537,11 @@ const MapView: React.FC = () => {
           <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 text-xs text-slate-600 shadow-lg border border-white/20">
             <div className="flex items-center gap-2 mb-1">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="font-medium">Reports with location: {markers.filter(m => m.type === 'report').length}</span>
+              <span className="font-medium">Community reports: {markers.filter(m => m.type === 'report').length}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>Total markers: {markers.length}</span>
+              <span>Total locations: {markers.length}</span>
             </div>
           </div>
         </CardContent>
@@ -572,12 +554,12 @@ const MapView: React.FC = () => {
             <div className="p-2 bg-green-100 rounded-lg">
               <Filter className="h-5 w-5 text-green-600" />
             </div>
-            <span className="text-lg font-semibold">Reports ({filteredReports.length})</span>
+            <span className="text-lg font-semibold">Community Reports ({filteredReports.length})</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 h-[calc(100%-100px)] flex flex-col">
           {/* Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="h-10 bg-white/80 border-slate-200 focus:border-blue-500">
                 <SelectValue placeholder="Filter by Status" />
@@ -603,18 +585,6 @@ const MapView: React.FC = () => {
                 ))}
               </SelectContent>
             </Select>
-
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="h-10 bg-white/80 border-slate-200 focus:border-blue-500">
-                <SelectValue placeholder="Filter by Priority" />
-              </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-sm">
-                <SelectItem value="all">All Priorities</SelectItem>
-                {getUniquePriorities().map(priority => (
-                  <SelectItem key={priority} value={priority}>{priority}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Reports List */}
@@ -623,7 +593,7 @@ const MapView: React.FC = () => {
               <div className="flex items-center justify-center h-32">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-3"></div>
-                  <p className="text-slate-600">Loading reports...</p>
+                  <p className="text-slate-600">Loading community reports...</p>
                 </div>
               </div>
             ) : filteredReports.length === 0 ? (
@@ -707,4 +677,4 @@ const MapView: React.FC = () => {
   );
 };
 
-export default MapView;
+export default CitizenMapView;
