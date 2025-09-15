@@ -89,46 +89,92 @@ const QuickStats = memo(({
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-4 sm:mb-6">
-      {stats.map((stat, index) => {
-        const Icon = stat.icon;
-        return (
-          <Card key={index} className="hover:shadow-md transition-shadow duration-200">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium leading-none">{stat.title}</CardTitle>
-              <Icon className={`h-3 w-3 sm:h-4 sm:w-4 ${stat.color} flex-shrink-0`} />
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex items-center justify-between">
-                <div className="text-lg sm:text-2xl font-bold">
-                  {stat.value}
-                  {stat.suffix && <span className="text-xs sm:text-sm text-muted-foreground ml-1">{stat.suffix}</span>}
-                </div>
-                {stat.trend !== undefined && stat.trend !== 0 && (
-                  <div className={`flex items-center gap-1 text-xs sm:text-sm ${
-                    stat.trend > 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {stat.trend > 0 ? (
-                      <TrendingUp className="h-2 w-2 sm:h-3 sm:w-3" />
-                    ) : (
-                      <TrendingDown className="h-2 w-2 sm:h-3 sm:w-3" />
-                    )}
-                    {Math.abs(stat.trend)}
-                  </div>
-                )}
-                {stat.badge && (
-                  <Badge 
-                    variant={stat.badge === 'High' ? 'destructive' : stat.badge === 'Medium' ? 'default' : 'secondary'}
-                    className="text-xs px-1"
-                  >
-                    {stat.badge}
-                  </Badge>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <CardTitle className="text-sm font-semibold text-slate-700">Total Reports</CardTitle>
+          <div className="p-2 bg-blue-500 rounded-lg">
+            <FileText className="h-4 w-4 text-white" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-slate-800 mb-2">{totalReports}</div>
+          <div className="flex items-center gap-1">
+            <div className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">
+              +{reportsTrend}
+            </div>
+            <p className="text-xs text-slate-600">from last month</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <CardTitle className="text-sm font-semibold text-slate-700">Pending Reports</CardTitle>
+          <div className="p-2 bg-orange-500 rounded-lg">
+            <Clock className="h-4 w-4 text-white" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-slate-800 mb-2">{pendingReports}</div>
+          <Badge 
+            className={`${
+              pendingReports > 10 
+                ? "bg-red-100 text-red-700 hover:bg-red-200" 
+                : "bg-green-100 text-green-700 hover:bg-green-200"
+            } font-medium`}
+          >
+            {pendingReports > 10 ? "High Priority" : "Normal Level"}
+          </Badge>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gradient-to-br from-green-50 to-green-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <CardTitle className="text-sm font-semibold text-slate-700">Resolved Reports</CardTitle>
+          <div className="p-2 bg-green-500 rounded-lg">
+            <CheckCircle className="h-4 w-4 text-white" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-slate-800 mb-2">{resolvedReports}</div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 bg-slate-200 rounded-full h-2">
+              <div 
+                className="bg-green-500 h-2 rounded-full transition-all duration-500" 
+                style={{ 
+                  width: `${totalReports > 0 
+                    ? Math.round((resolvedReports / totalReports) * 100)
+                    : 0}%` 
+                }}
+              />
+            </div>
+            <p className="text-xs font-medium text-slate-600">
+              {totalReports > 0 
+                ? Math.round((resolvedReports / totalReports) * 100)
+                : 0}%
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <CardTitle className="text-sm font-semibold text-slate-700">Active Users</CardTitle>
+          <div className="p-2 bg-purple-500 rounded-lg">
+            <Users className="h-4 w-4 text-white" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-slate-800 mb-2">{totalUsers}</div>
+          <div className="flex items-center gap-1">
+            <div className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+              +0
+            </div>
+            <p className="text-xs text-slate-600">new this month</p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 });

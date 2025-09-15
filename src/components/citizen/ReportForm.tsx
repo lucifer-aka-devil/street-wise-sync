@@ -196,24 +196,33 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-          <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
+    <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-xl">
+      <CardHeader className="pb-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+        <CardTitle className="flex items-center gap-3 text-xl font-semibold text-slate-800">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <MapPin className="h-5 w-5 text-blue-600" />
+          </div>
           Report an Issue
         </CardTitle>
+        <p className="text-sm text-slate-600 mt-2">
+          Provide detailed information to help us address the issue effectively
+        </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 space-y-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Issue Title</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-700">Issue Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Pothole on Main Street" {...field} />
+                    <Input 
+                      placeholder="e.g., Pothole on Main Street" 
+                      className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400"
+                      {...field} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -225,11 +234,11 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-700">Description</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Please provide detailed information about the issue..."
-                      className="min-h-[100px]"
+                      className="min-h-[120px] bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400 resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -238,16 +247,16 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               )}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="category_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="text-sm font-medium text-slate-700">Category</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400">
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                       </FormControl>
@@ -275,18 +284,38 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Priority</FormLabel>
+                    <FormLabel className="text-sm font-medium text-slate-700">Priority</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="urgent">Urgent</SelectItem>
+                        <SelectItem value="low">
+                          <span className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            Low Priority
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="medium">
+                          <span className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                            Medium Priority
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="high">
+                          <span className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                            High Priority
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="urgent">
+                          <span className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                            Urgent
+                          </span>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -300,25 +329,26 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-700">Address</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input 
                         placeholder="Enter address or use current location"
+                        className="bg-white/80 border-slate-200 focus:border-blue-400 focus:ring-blue-400 pr-12"
                         {...field}
                       />
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 px-2"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 px-2 hover:bg-blue-50"
                         onClick={getCurrentLocation}
                         disabled={gettingLocation}
                       >
                         {gettingLocation ? (
-                          <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
                         ) : (
-                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <MapPin className="h-4 w-4 text-blue-600" />
                         )}
                       </Button>
                     </div>
@@ -330,8 +360,9 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
 
             <div className="space-y-4">
               <div>
-                <Label>Photos (Optional)</Label>
-                <div className="mt-2">
+                <Label className="text-sm font-medium text-slate-700">Photos (Optional)</Label>
+                <p className="text-xs text-slate-500 mt-1">Add up to 5 photos to help illustrate the issue</p>
+                <div className="mt-3">
                   <Input
                     type="file"
                     accept="image/*"
@@ -344,31 +375,31 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
                     type="button"
                     variant="outline"
                     onClick={() => document.getElementById('photo-upload')?.click()}
-                    className="w-full"
+                    className="w-full bg-white/80 border-slate-200 hover:bg-blue-50 hover:border-blue-300 transition-colors"
                   >
-                    <Camera className="mr-2 h-4 w-4" />
+                    <Camera className="mr-2 h-4 w-4 text-blue-600" />
                     Add Photos ({photos.length}/5)
                   </Button>
                 </div>
               </div>
 
               {photos.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {photos.map((photo, index) => (
-                    <div key={index} className="relative">
+                    <div key={index} className="relative group">
                       <img
                         src={URL.createObjectURL(photo)}
                         alt={`Upload ${index + 1}`}
-                        className="w-full h-16 sm:h-20 object-cover rounded-md"
+                        className="w-full h-24 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
                       />
                       <Button
                         type="button"
                         variant="destructive"
                         size="sm"
-                        className="absolute -top-1 -right-1 h-5 w-5 sm:h-6 sm:w-6 rounded-full p-0"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={() => removePhoto(index)}
                       >
-                        <X className="h-2 w-2 sm:h-3 sm:w-3" />
+                        <X className="h-3 w-3" />
                       </Button>
                     </div>
                   ))}
@@ -376,14 +407,22 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={uploading}>
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-3"
+              disabled={uploading}
+              size="lg"
+            >
               {uploading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Submitting Report...
                 </>
               ) : (
-                'Submit Report'
+                <>
+                  <MapPin className="mr-2 h-5 w-5" />
+                  Submit Report
+                </>
               )}
             </Button>
           </form>
