@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from '@/hooks/use-toast';
 import { 
   Plus, 
@@ -40,28 +41,30 @@ interface Report {
   user_voted?: boolean;
 }
 
-const statusConfig = {
-  submitted: { label: 'Submitted', icon: Clock, color: 'bg-blue-500' },
-  acknowledged: { label: 'Acknowledged', icon: Eye, color: 'bg-yellow-500' },
-  in_progress: { label: 'In Progress', icon: AlertCircle, color: 'bg-orange-500' },
-  resolved: { label: 'Resolved', icon: CheckCircle, color: 'bg-green-500' },
-  rejected: { label: 'Rejected', icon: XCircle, color: 'bg-red-500' },
-};
+const getStatusConfig = (t: (key: string) => string) => ({
+  submitted: { label: t('status.submitted'), icon: Clock, color: 'bg-blue-500' },
+  acknowledged: { label: t('status.acknowledged'), icon: Eye, color: 'bg-yellow-500' },
+  in_progress: { label: t('status.in_progress'), icon: AlertCircle, color: 'bg-orange-500' },
+  resolved: { label: t('status.resolved'), icon: CheckCircle, color: 'bg-green-500' },
+  rejected: { label: t('status.rejected'), icon: XCircle, color: 'bg-red-500' },
+});
 
-const priorityConfig = {
-  low: { label: 'Low', color: 'bg-gray-500' },
-  medium: { label: 'Medium', color: 'bg-blue-500' },
-  high: { label: 'High', color: 'bg-orange-500' },
-  urgent: { label: 'Urgent', color: 'bg-red-500' },
-};
+const getPriorityConfig = (t: (key: string) => string) => ({
+  low: { label: t('priority.low'), color: 'bg-gray-500' },
+  medium: { label: t('priority.medium'), color: 'bg-blue-500' },
+  high: { label: t('priority.high'), color: 'bg-orange-500' },
+  urgent: { label: t('priority.urgent'), color: 'bg-red-500' },
+});
 
 export default function CitizenDashboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [reports, setReports] = useState<Report[]>([]);
   const [myReports, setMyReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [showReportForm, setShowReportForm] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [showMapView, setShowMapView] = useState(false);
 
   useEffect(() => {
     fetchReports();
@@ -149,8 +152,8 @@ export default function CitizenDashboard() {
   const handleVote = async (reportId: string, hasVoted: boolean) => {
     if (!user) {
       toast({
-        title: "Please sign in",
-        description: "You need to be signed in to vote on reports.",
+        title: t('citizen.signInToVote'),
+        description: t('citizen.signInToVoteDesc'),
         variant: "destructive",
       });
       return;
@@ -182,8 +185,8 @@ export default function CitizenDashboard() {
         if (error) throw error;
         
         toast({
-          title: "Vote removed",
-          description: "Your vote has been removed from this report.",
+          title: t('citizen.voteRemoved'),
+          description: t('citizen.voteRemovedDesc'),
         });
       } else {
         // Add vote
@@ -197,8 +200,8 @@ export default function CitizenDashboard() {
         if (error) throw error;
         
         toast({
-          title: "Vote added",
-          description: "Your vote has been added to this report.",
+          title: t('citizen.voteAdded'),
+          description: t('citizen.voteAddedDesc'),
         });
       }
 
@@ -222,14 +225,16 @@ export default function CitizenDashboard() {
       );
       
       toast({
-        title: "Error",
-        description: error.message || "There was an error processing your vote. Please try again.",
+        title: t('citizen.voteError'),
+        description: error.message || t('citizen.voteErrorDesc'),
         variant: "destructive",
       });
     }
   };
 
   const ReportCard = ({ report }: { report: Report }) => {
+    const statusConfig = getStatusConfig(t);
+    const priorityConfig = getPriorityConfig(t);
     const StatusIcon = statusConfig[report.status].icon;
     
     return (
@@ -241,7 +246,7 @@ export default function CitizenDashboard() {
                 <CardTitle className="text-lg font-semibold text-slate-800 leading-tight">{report.title}</CardTitle>
                 <CardDescription className="flex items-center gap-2 text-sm text-slate-600">
                   <MapPin className="h-4 w-4 flex-shrink-0 text-green-600" />
-                  <span className="truncate">{report.address || 'Location not specified'}</span>
+                  <span className="truncate">{report.address || t('citizen.locationNotSpecified')}</span>
                 </CardDescription>
               </div>
               <div className="flex items-center gap-2">
@@ -321,7 +326,7 @@ export default function CitizenDashboard() {
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="mb-4 sm:mb-6">
           <Button variant="outline" onClick={() => setShowReportForm(false)} size="sm">
-            ← Back to Dashboard
+            {t('citizen.backToDashboard')}
           </Button>
         </div>
         <ReportForm onSuccess={() => setShowReportForm(false)} />
@@ -335,10 +340,10 @@ export default function CitizenDashboard() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 sm:mb-10">
           <div className="min-w-0 flex-1">
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
-              Civic Reports
+              {t('citizen.title')}
             </h1>
             <p className="text-base sm:text-lg text-slate-600">
-              Report issues, track progress, and engage with your community for a better tomorrow
+              {t('citizen.subtitle')}
             </p>
           </div>
           <Button 
@@ -347,8 +352,8 @@ export default function CitizenDashboard() {
             size="lg"
           >
             <Plus className="mr-2 h-5 w-5" />
-            <span className="sm:hidden">Report Issue</span>
-            <span className="hidden sm:inline">New Report</span>
+            <span className="sm:hidden">{t('citizen.reportIssue')}</span>
+            <span className="hidden sm:inline">{t('citizen.newReport')}</span>
           </Button>
         </div>
 
@@ -358,20 +363,20 @@ export default function CitizenDashboard() {
               value="all" 
               className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
             >
-              All Reports
+              {t('citizen.allReports')}
             </TabsTrigger>
             <TabsTrigger 
               value="mine" 
               className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600"
             >
-              My Reports
+              {t('citizen.myReports')}
             </TabsTrigger>
             <TabsTrigger 
               value="map" 
               className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 flex items-center gap-1"
             >
               <Map className="h-4 w-4" />
-              Map View
+              {t('citizen.mapView')}
             </TabsTrigger>
           </TabsList>
 
@@ -381,14 +386,14 @@ export default function CitizenDashboard() {
                 <div className="col-span-full flex items-center justify-center py-16">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-slate-600">Loading reports...</p>
+                    <p className="text-slate-600">{t('citizen.loading')}</p>
                   </div>
                 </div>
               ) : reports.length === 0 ? (
                 <div className="col-span-full text-center py-16">
                   <Filter className="h-16 w-16 mx-auto mb-4 text-slate-300" />
-                  <p className="text-lg font-medium text-slate-600 mb-2">No reports found</p>
-                  <p className="text-slate-500">Be the first to report an issue in your community!</p>
+                  <p className="text-lg font-medium text-slate-600 mb-2">{t('citizen.noReports')}</p>
+                  <p className="text-slate-500">{t('citizen.noReportsDesc')}</p>
                 </div>
               ) : (
                 reports.map((report) => (
@@ -402,7 +407,7 @@ export default function CitizenDashboard() {
             {!user ? (
               <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-lg">
                 <CardContent className="pt-8 text-center">
-                  <p className="text-slate-600 text-lg">Please sign in to view your reports.</p>
+                  <p className="text-slate-600 text-lg">{t('citizen.signInToView')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -410,15 +415,15 @@ export default function CitizenDashboard() {
                 {myReports.length === 0 ? (
                   <div className="col-span-full text-center py-16">
                     <Plus className="h-16 w-16 mx-auto mb-4 text-slate-300" />
-                    <p className="text-lg font-medium text-slate-600 mb-2">You haven't submitted any reports yet</p>
-                    <p className="text-slate-500 mb-6">Start making a difference in your community today!</p>
+                    <p className="text-lg font-medium text-slate-600 mb-2">{t('citizen.noMyReports')}</p>
+                    <p className="text-slate-500 mb-6">{t('citizen.noMyReportsDesc')}</p>
                     <Button 
                       className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200" 
                       onClick={() => setShowReportForm(true)}
                       size="lg"
                     >
                       <Plus className="mr-2 h-5 w-5" />
-                      Submit Your First Report
+                      {t('citizen.submitFirst')}
                     </Button>
                   </div>
                 ) : (

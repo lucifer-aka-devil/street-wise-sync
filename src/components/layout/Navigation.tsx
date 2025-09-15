@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { 
   Home, 
   Shield, 
@@ -16,6 +18,7 @@ interface NavigationProps {
 
 export default function Navigation({ currentView, onViewChange }: NavigationProps) {
   const { user, profile, signOut, isStaff } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
@@ -33,7 +36,7 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                     <span className="hidden sm:inline">Government of Jharkhand</span>
                     <span className="sm:hidden">Jharkhand Gov</span>
                   </h1>
-                  <p className="text-xs sm:text-sm text-slate-600 hidden sm:block font-medium">Civic Reporting Portal</p>
+                  <p className="text-xs sm:text-sm text-slate-600 hidden sm:block font-medium">{t('nav.portal')}</p>
                 </div>
               </div>
             </div>
@@ -52,8 +55,8 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   size="sm"
                 >
                   <Home className="h-4 w-4" />
-                  <span className="hidden lg:inline">Citizen Portal</span>
-                  <span className="lg:hidden">Citizen</span>
+                  <span className="hidden lg:inline">{t('nav.citizenPortal')}</span>
+                  <span className="lg:hidden">{t('nav.citizen')}</span>
                 </Button>
                 
                 {isStaff && (
@@ -68,8 +71,8 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                     size="sm"
                   >
                     <Shield className="h-4 w-4" />
-                    <span className="hidden lg:inline">Admin Dashboard</span>
-                    <span className="lg:hidden">Admin</span>
+                    <span className="hidden lg:inline">{t('nav.adminDashboard')}</span>
+                    <span className="lg:hidden">{t('nav.admin')}</span>
                   </Button>
                 )}
               </div>
@@ -78,6 +81,8 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
 
           {/* User Info and Actions - Enhanced */}
           <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+            {/* Language Selector */}
+            <LanguageSelector />
             {user ? (
               <>
                 {/* User Info - Enhanced */}
@@ -113,12 +118,12 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   className="flex items-center gap-2 border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-200"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span className="hidden sm:inline font-medium">Sign Out</span>
+                  <span className="hidden sm:inline font-medium">{t('nav.signOut')}</span>
                 </Button>
               </>
             ) : (
               <div className="text-sm text-slate-600 hidden sm:block bg-slate-50 px-4 py-2 rounded-lg">
-                Please sign in to access the platform
+                {t('nav.signInPrompt')}
               </div>
             )}
           </div>
@@ -139,7 +144,7 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                 size="sm"
               >
                 <Home className="h-4 w-4" />
-                Citizen Portal
+                {t('nav.citizenPortal')}
               </Button>
               
               {isStaff && (
@@ -154,7 +159,7 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   size="sm"
                 >
                   <Shield className="h-4 w-4" />
-                  Admin Dashboard
+                  {t('nav.adminDashboard')}
                 </Button>
               )}
             </div>
