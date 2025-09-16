@@ -28,11 +28,11 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
           <div className="flex items-center space-x-4 sm:space-x-8 min-w-0">
             <div className="flex items-center min-w-0">
               <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0 shadow-lg">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0 shadow-lg">
                   JH
                 </div>
                 <div className="min-w-0">
-                  <h1 className="text-base sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
+                  <h1 className="text-base sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent truncate">
                     <span className="hidden sm:inline">Government of Jharkhand</span>
                     <span className="sm:hidden">Jharkhand Gov</span>
                   </h1>
@@ -44,20 +44,22 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
             {/* Navigation Buttons - Enhanced */}
             {user && (
               <div className="hidden md:flex space-x-3">
-                <Button
-                  variant={currentView === 'citizen' ? 'default' : 'ghost'}
-                  onClick={() => onViewChange('citizen')}
-                  className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
-                    currentView === 'citizen' 
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl' 
-                      : 'hover:bg-blue-50 hover:text-blue-600'
-                  }`}
-                  size="sm"
-                >
-                  <Home className="h-4 w-4" />
-                  <span className="hidden lg:inline">{t('nav.citizenPortal')}</span>
-                  <span className="lg:hidden">{t('nav.citizen')}</span>
-                </Button>
+                {!isStaff && (
+                  <Button
+                    variant={currentView === 'citizen' ? 'default' : 'ghost'}
+                    onClick={() => onViewChange('citizen')}
+                    className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+                      currentView === 'citizen' 
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-orange-50 hover:text-orange-600'
+                    }`}
+                    size="sm"
+                  >
+                    <Home className="h-4 w-4" />
+                    <span className="hidden lg:inline">{t('nav.citizenPortal')}</span>
+                    <span className="lg:hidden">{t('nav.citizen')}</span>
+                  </Button>
+                )}
                 
                 {isStaff && (
                   <Button
@@ -65,8 +67,8 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                     onClick={() => onViewChange('admin')}
                     className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
                       currentView === 'admin' 
-                        ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg hover:shadow-xl' 
-                        : 'hover:bg-emerald-50 hover:text-emerald-600'
+                        ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-orange-50 hover:text-orange-600'
                     }`}
                     size="sm"
                   >
@@ -133,19 +135,21 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
         {user && (
           <div className="md:hidden border-t border-slate-200 pt-3 pb-3 bg-slate-50/50">
             <div className="flex space-x-3">
-              <Button
-                variant={currentView === 'citizen' ? 'default' : 'ghost'}
-                onClick={() => onViewChange('citizen')}
-                className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
-                  currentView === 'citizen' 
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md' 
-                    : 'hover:bg-blue-50 hover:text-blue-600'
-                }`}
-                size="sm"
-              >
-                <Home className="h-4 w-4" />
-                {t('nav.citizenPortal')}
-              </Button>
+              {!isStaff && (
+                <Button
+                  variant={currentView === 'citizen' ? 'default' : 'ghost'}
+                  onClick={() => onViewChange('citizen')}
+                  className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
+                    currentView === 'citizen' 
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md' 
+                      : 'hover:bg-orange-50 hover:text-orange-600'
+                  }`}
+                  size="sm"
+                >
+                  <Home className="h-4 w-4" />
+                  {t('nav.citizenPortal')}
+                </Button>
+              )}
               
               {isStaff && (
                 <Button
@@ -153,8 +157,8 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   onClick={() => onViewChange('admin')}
                   className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
                     currentView === 'admin' 
-                      ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md' 
-                      : 'hover:bg-emerald-50 hover:text-emerald-600'
+                      ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md' 
+                      : 'hover:bg-orange-50 hover:text-orange-600'
                   }`}
                   size="sm"
                 >

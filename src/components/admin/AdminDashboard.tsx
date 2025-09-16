@@ -79,7 +79,7 @@ export default function AdminDashboard() {
       });
 
       setStatusStats([
-        { name: 'Submitted', value: submitted, color: '#3B82F6' },
+        { name: 'Submitted', value: submitted, color: '#F97316' },
         { name: 'Acknowledged', value: acknowledged, color: '#F59E0B' },
         { name: 'In Progress', value: inProgress, color: '#10B981' },
         { name: 'Resolved', value: resolved, color: '#059669' },
@@ -152,13 +152,13 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header Section */}
         <div className="mb-8 sm:mb-10">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent mb-2">
                 Admin Dashboard
               </h1>
               <p className="text-base sm:text-lg text-slate-600">Monitor and analyze civic complaints with real-time insights</p>
@@ -171,43 +171,43 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto p-1 bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 h-auto p-1 bg-white/70 backdrop-blur-sm border border-orange-200/30 shadow-sm rounded-xl">
             <TabsTrigger 
               value="overview" 
-              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-medium"
+              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-500 data-[state=active]:text-white data-[state=active]:shadow-md font-medium rounded-lg"
             >
               <span className="hidden sm:inline">Overview</span>
               <span className="sm:hidden">Stats</span>
             </TabsTrigger>
             <TabsTrigger 
               value="reports" 
-              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-medium"
+              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-500 data-[state=active]:text-white data-[state=active]:shadow-md font-medium rounded-lg"
             >
               Reports
             </TabsTrigger>
             <TabsTrigger 
               value="users" 
-              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-medium"
+              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-500 data-[state=active]:text-white data-[state=active]:shadow-md font-medium rounded-lg"
             >
               Users
             </TabsTrigger>
             <TabsTrigger 
               value="categories" 
-              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-medium"
+              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-500 data-[state=active]:text-white data-[state=active]:shadow-md font-medium rounded-lg"
             >
               <span className="hidden sm:inline">Categories</span>
               <span className="sm:hidden">Cat</span>
             </TabsTrigger>
             <TabsTrigger 
               value="departments" 
-              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-medium"
+              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-500 data-[state=active]:text-white data-[state=active]:shadow-md font-medium rounded-lg"
             >
               <span className="hidden sm:inline">Departments</span>
               <span className="sm:hidden">Dept</span>
             </TabsTrigger>
             <TabsTrigger 
               value="map" 
-              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-medium"
+              className="text-xs sm:text-sm px-3 py-2.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-amber-500 data-[state=active]:text-white data-[state=active]:shadow-md font-medium rounded-lg"
             >
               Map
             </TabsTrigger>
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
             {loading ? (
               <div className="flex items-center justify-center py-16">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
                   <p className="text-slate-600">Loading dashboard data...</p>
                 </div>
               </div>
@@ -230,7 +230,7 @@ export default function AdminDashboard() {
                   <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                     <CardHeader className="pb-4">
                       <CardTitle className="text-lg sm:text-xl font-semibold text-slate-800 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                         Reports by Status
                       </CardTitle>
                     </CardHeader>
@@ -289,7 +289,7 @@ export default function AdminDashboard() {
                               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                             }}
                           />
-                          <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="count" fill="#F97316" radius={[4, 4, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </CardContent>
@@ -364,7 +364,7 @@ export default function AdminDashboard() {
                               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                             }}
                           />
-                          <Bar dataKey="count" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="count" fill="#F97316" radius={[4, 4, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </CardContent>
@@ -402,7 +402,7 @@ export default function AdminDashboard() {
                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                           }}
                         />
-                        <Bar dataKey="avgDays" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="avgDays" fill="#F97316" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>

@@ -17,18 +17,18 @@ mapboxgl.accessToken = MAPBOX_TOKEN;
 // Add custom popup styles
 const popupStyles = `
   .mapboxgl-popup {
-    max-width: 250px !important;
+    max-width: 200px !important;
   }
   .mapboxgl-popup-content {
-    padding: 8px !important;
-    border-radius: 8px !important;
+    padding: 6px !important;
+    border-radius: 6px !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    max-height: 400px !important;
+    max-height: 250px !important;
     overflow-y: auto !important;
   }
   .mapboxgl-popup-close-button {
-    font-size: 16px !important;
-    padding: 4px !important;
+    font-size: 14px !important;
+    padding: 2px !important;
   }
 `;
 
@@ -327,35 +327,36 @@ const CitizenMapView: React.FC = () => {
         // Build images HTML if photos exist
         let imagesHtml = '';
         if (report.photos && report.photos.length > 0) {
-          const imagesList = report.photos.map(photo => 
-            `<img src="${photo}" alt="Report photo" style="width: 100%; max-width: 180px; height: 80px; object-fit: cover; border-radius: 4px; margin: 2px 0; cursor: pointer; border: 1px solid #e5e7eb;" onclick="window.open('${photo}', '_blank')" />`
+          const imagesList = report.photos.slice(0, 2).map(photo => 
+            `<img src="${photo}" alt="Report photo" style="width: 100%; max-width: 150px; height: 60px; object-fit: cover; border-radius: 3px; margin: 2px 0; cursor: pointer; border: 1px solid #e5e7eb;" onclick="window.open('${photo}', '_blank')" />`
           ).join('');
           imagesHtml = `
-            <div style="border-top: 1px solid #e5e7eb; padding-top: 6px; margin-top: 6px;">
-              <strong style="font-size: 11px; color: #374151;">Photos:</strong>
-              <div style="margin-top: 4px;">
+            <div style="border-top: 1px solid #e5e7eb; padding-top: 4px; margin-top: 4px;">
+              <strong style="font-size: 10px; color: #374151;">Photos:</strong>
+              <div style="margin-top: 3px;">
                 ${imagesList}
+                ${report.photos.length > 2 ? `<div style="font-size: 9px; color: #6b7280; margin-top: 2px;">+${report.photos.length - 2} more</div>` : ''}
               </div>
             </div>
           `;
         }
 
         popupContent = `
-          <div style="max-width: 220px; font-family: system-ui, -apple-system, sans-serif; font-size: 12px;">
-            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-              <div style="width: 8px; height: 8px; border-radius: 50%; background-color: ${statusColor};"></div>
-              <strong style="font-size: 11px; color: #111827;">${report.status.toUpperCase()}</strong>
+          <div style="max-width: 180px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px;">
+            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+              <div style="width: 6px; height: 6px; border-radius: 50%; background-color: ${statusColor};"></div>
+              <strong style="font-size: 10px; color: #111827;">${report.status.toUpperCase()}</strong>
             </div>
             
-            <h3 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 600; color: #111827; line-height: 1.2;">${report.title}</h3>
+            <h3 style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #111827; line-height: 1.2;">${report.title}</h3>
             
-            <p style="margin: 0 0 6px 0; font-size: 11px; color: #374151; line-height: 1.3; max-height: 40px; overflow: hidden; text-overflow: ellipsis;">${report.description}</p>
+            <p style="margin: 0 0 4px 0; font-size: 10px; color: #374151; line-height: 1.3; max-height: 32px; overflow: hidden; text-overflow: ellipsis;">${report.description}</p>
             
             ${imagesHtml}
             
-            <div style="border-top: 1px solid #e5e7eb; padding-top: 6px; margin-top: 6px; font-size: 10px; color: #6b7280; line-height: 1.2;">
-              ${report.categories ? `<div style="margin-bottom: 2px;"><strong>Category:</strong> ${report.categories.name}</div>` : ''}
-              ${report.priority ? `<div style="margin-bottom: 2px;"><strong>Priority:</strong> ${report.priority}</div>` : ''}
+            <div style="border-top: 1px solid #e5e7eb; padding-top: 4px; margin-top: 4px; font-size: 9px; color: #6b7280; line-height: 1.2;">
+              ${report.categories ? `<div style="margin-bottom: 1px;"><strong>Category:</strong> ${report.categories.name}</div>` : ''}
+              ${report.priority ? `<div style="margin-bottom: 1px;"><strong>Priority:</strong> ${report.priority}</div>` : ''}
               <div><strong>Created:</strong> ${new Date(report.created_at).toLocaleDateString()}</div>
             </div>
           </div>
@@ -375,7 +376,7 @@ const CitizenMapView: React.FC = () => {
 
       const popup = new mapboxgl.Popup({ 
         offset: 25,
-        maxWidth: '250px',
+        maxWidth: '200px',
         className: 'custom-popup'
       }).setHTML(popupContent);
 
