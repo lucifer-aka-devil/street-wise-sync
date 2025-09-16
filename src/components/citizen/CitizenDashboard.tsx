@@ -22,10 +22,12 @@ import {
   Search,
   Settings,
   BarChart3,
-  ExternalLink
+  ExternalLink,
+  FileText
 } from 'lucide-react';
 import ReportForm from './ReportForm';
 import CitizenMapView from './MapView';
+import MyReports from './MyReports';
 
 interface Report {
   id: string;
@@ -510,6 +512,18 @@ export default function CitizenDashboard() {
               </button>
               
               <button
+                onClick={() => setActiveTab('myreports')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeTab === 'myreports' 
+                    ? 'bg-gray-100 text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <FileText className="h-5 w-5" />
+                My Reports
+              </button>
+              
+              <button
                 onClick={() => setActiveTab('settings')}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   activeTab === 'settings' 
@@ -560,6 +574,18 @@ export default function CitizenDashboard() {
             >
               <Map className="h-4 w-4" />
               Map
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('myreports')}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                activeTab === 'myreports' 
+                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <FileText className="h-4 w-4" />
+              My Reports
             </button>
             
             <button
@@ -694,6 +720,10 @@ export default function CitizenDashboard() {
               <div className="h-[calc(100vh-200px)]">
                 <CitizenMapView />
               </div>
+            )}
+
+            {activeTab === 'myreports' && (
+              <MyReports />
             )}
 
             {activeTab === 'settings' && (
