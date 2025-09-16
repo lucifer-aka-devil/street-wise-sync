@@ -17,6 +17,10 @@ import {
   XCircle,
   Filter,
   Search,
+  Settings,
+  BarChart3,
+  ExternalLink,
+  Hash,
   FileText,
   Calendar,
   User
@@ -152,6 +156,10 @@ export default function MyReports() {
               <CardTitle className="text-base font-bold text-slate-800 leading-tight mb-1 group-hover:text-blue-700 transition-colors">
                 {report.title}
               </CardTitle>
+              <CardDescription className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+                <Hash className="h-3 w-3 flex-shrink-0 text-blue-500" />
+                <span className="font-mono text-xs break-all">{report.id}</span>
+              </CardDescription>
               <CardDescription className="flex items-center gap-1.5 text-xs text-slate-500">
                 <MapPin className="h-3 w-3 flex-shrink-0 text-blue-500" />
                 <span className="truncate">{report.address || 'Location not specified'}</span>

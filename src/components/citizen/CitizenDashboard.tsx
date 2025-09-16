@@ -23,11 +23,13 @@ import {
   Settings,
   BarChart3,
   ExternalLink,
-  FileText
+  FileText,
+  Hash
 } from 'lucide-react';
 import ReportForm from './ReportForm';
 import CitizenMapView from './MapView';
 import MyReports from './MyReports';
+import TrackReport from './TrackReport';
 
 interface Report {
   id: string;
@@ -273,6 +275,10 @@ export default function CitizenDashboard() {
               <CardTitle className="text-base font-bold text-slate-800 leading-tight mb-1 group-hover:text-orange-700 transition-colors">
                 {report.title}
               </CardTitle>
+              <CardDescription className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+                <Hash className="h-3 w-3 flex-shrink-0 text-orange-500" />
+                <span className="font-mono text-xs break-all">{report.id}</span>
+              </CardDescription>
               <CardDescription className="flex items-center gap-1.5 text-xs text-slate-500">
                 <MapPin className="h-3 w-3 flex-shrink-0 text-orange-500" />
                 <span className="truncate">{report.address || t('citizen.locationNotSpecified')}</span>
@@ -364,7 +370,10 @@ export default function CitizenDashboard() {
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">{report.title}</h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{report.title}</h3>
+                  <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded break-all">{report.id}</span>
+                </div>
                 <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">{report.description}</p>
                 
                 {/* Images */}
@@ -524,6 +533,18 @@ export default function CitizenDashboard() {
               </button>
               
               <button
+                onClick={() => setActiveTab('track')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeTab === 'track' 
+                    ? 'bg-gray-100 text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <Search className="h-5 w-5" />
+                Track Report
+              </button>
+              
+              <button
                 onClick={() => setActiveTab('settings')}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   activeTab === 'settings' 
@@ -586,6 +607,18 @@ export default function CitizenDashboard() {
             >
               <FileText className="h-4 w-4" />
               My Reports
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('track')}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                activeTab === 'track' 
+                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Search className="h-4 w-4" />
+              Track
             </button>
             
             <button
@@ -724,6 +757,10 @@ export default function CitizenDashboard() {
 
             {activeTab === 'myreports' && (
               <MyReports />
+            )}
+
+            {activeTab === 'track' && (
+              <TrackReport />
             )}
 
             {activeTab === 'settings' && (

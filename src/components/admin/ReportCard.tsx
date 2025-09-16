@@ -16,7 +16,8 @@ import {
   AlertCircle,
   Clock,
   Trash2,
-  CheckCircle
+  CheckCircle,
+  Hash
 } from 'lucide-react';
 
 interface Report {
@@ -103,7 +104,10 @@ const ReportCard = memo(({
         <div className="space-y-4">
           {/* Title and basic info */}
           <div>
-            <CardTitle className="text-lg leading-tight mb-2">{report.title}</CardTitle>
+            <div className="flex items-center gap-2 mb-2">
+              <CardTitle className="text-lg leading-tight">{report.title}</CardTitle>
+              <span className="text-sm text-muted-foreground font-mono bg-muted px-2 py-1 rounded break-all">{report.id}</span>
+            </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
               <div className="flex items-center gap-1">
                 <User className="h-4 w-4" />
