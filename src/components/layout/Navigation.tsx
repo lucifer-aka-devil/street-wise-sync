@@ -21,14 +21,14 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
   const { t } = useLanguage();
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-18">
-          {/* Logo and Brand - Enhanced */}
+    <nav className="bg-white/90 backdrop-blur-lg shadow-soft border-b border-white/30 sticky top-0 z-50 animate-fade-in">
+      <div className="container-responsive">
+        <div className="flex justify-between items-center h-16 sm:h-20">
+          {/* Logo and Brand - Prince's orange theme with enhanced styling */}
           <div className="flex items-center space-x-4 sm:space-x-8 min-w-0">
             <div className="flex items-center min-w-0">
               <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0 shadow-lg">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                   JH
                 </div>
                 <div className="min-w-0">
@@ -36,31 +36,31 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                     <span className="hidden sm:inline">Government of Jharkhand</span>
                     <span className="sm:hidden">Jharkhand Gov</span>
                   </h1>
-                  <p className="text-xs sm:text-sm text-slate-600 hidden sm:block font-medium">{t('nav.portal')}</p>
+                  <p className="text-xs sm:text-sm text-body hidden sm:block font-medium">{t('nav.portal')}</p>
                 </div>
               </div>
             </div>
             
-            {/* Navigation Buttons - Enhanced */}
+            {/* Navigation Buttons - Prince's design with conditional rendering */}
             {user && (
               <div className="hidden md:flex space-x-3">
-                {!isStaff && (
-                  <Button
-                    variant={currentView === 'citizen' ? 'default' : 'ghost'}
-                    onClick={() => onViewChange('citizen')}
-                    className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
-                      currentView === 'citizen' 
-                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:shadow-xl' 
-                        : 'hover:bg-orange-50 hover:text-orange-600'
-                    }`}
-                    size="sm"
-                  >
-                    <Home className="h-4 w-4" />
-                    <span className="hidden lg:inline">{t('nav.citizenPortal')}</span>
-                    <span className="lg:hidden">{t('nav.citizen')}</span>
-                  </Button>
-                )}
+                {/* Always show citizen portal for all users */}
+                <Button
+                  variant={currentView === 'citizen' ? 'default' : 'ghost'}
+                  onClick={() => onViewChange('citizen')}
+                  className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+                    currentView === 'citizen' 
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:shadow-xl' 
+                      : 'hover:bg-orange-50 hover:text-orange-600'
+                  }`}
+                  size="sm"
+                >
+                  <Home className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t('nav.citizenPortal')}</span>
+                  <span className="lg:hidden">{t('nav.citizen')}</span>
+                </Button>
                 
+                {/* Only show admin dashboard for staff */}
                 {isStaff && (
                   <Button
                     variant={currentView === 'admin' ? 'default' : 'ghost'}
@@ -81,24 +81,26 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
             )}
           </div>
 
-          {/* User Info and Actions - Enhanced */}
+          {/* User Info and Actions - Enhanced with main's improvements */}
           <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
             {/* Language Selector */}
-            <LanguageSelector />
+            <div className="animate-fade-in">
+              <LanguageSelector />
+            </div>
             {user ? (
               <>
                 {/* User Info - Enhanced */}
-                <div className="hidden sm:flex items-center space-x-3 text-sm min-w-0">
-                  <div className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="h-4 w-4 text-white" />
+                <div className="hidden sm:flex items-center space-x-3 text-sm min-w-0 animate-slide-up">
+                  <div className="flex items-center gap-3 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl px-4 py-2 shadow-soft hover:shadow-medium transition-all duration-300">
+                    <div className="w-10 h-10 bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <User className="h-5 w-5 text-white" />
                     </div>
                     <div className="min-w-0">
-                      <div className="truncate max-w-[120px] md:max-w-none font-medium text-slate-800">
+                      <div className="truncate max-w-[120px] md:max-w-none font-semibold text-slate-800">
                         {profile?.full_name || user.email}
                       </div>
                       {profile?.role && profile.role !== 'citizen' && (
-                        <div className="text-xs text-slate-500 hidden md:block capitalize">
+                        <div className="text-xs text-slate-500 hidden md:block capitalize font-medium">
                           {profile.role}
                         </div>
                       )}
@@ -107,9 +109,9 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                 </div>
                 
                 {/* Mobile User Icon */}
-                <div className="sm:hidden flex items-center">
-                  <div className="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                <div className="sm:hidden flex items-center animate-fade-in">
+                  <div className="w-10 h-10 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center shadow-soft">
+                    <User className="h-5 w-5 text-white" />
                   </div>
                 </div>
                 
@@ -117,40 +119,40 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   variant="outline"
                   size="sm"
                   onClick={signOut}
-                  className="flex items-center gap-2 border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-200"
+                  className="flex items-center gap-2 border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300 touch-target hover:scale-105 shadow-sm hover:shadow-md"
                 >
                   <LogOut className="h-4 w-4" />
                   <span className="hidden sm:inline font-medium">{t('nav.signOut')}</span>
                 </Button>
               </>
             ) : (
-              <div className="text-sm text-slate-600 hidden sm:block bg-slate-50 px-4 py-2 rounded-lg">
+              <div className="text-sm text-body hidden sm:block bg-gradient-to-r from-slate-50 to-slate-100 px-4 py-2 rounded-xl shadow-soft animate-fade-in">
                 {t('nav.signInPrompt')}
               </div>
             )}
           </div>
         </div>
         
-        {/* Mobile Navigation Menu - Enhanced */}
+        {/* Mobile Navigation Menu - Prince's design with proper conditional rendering */}
         {user && (
-          <div className="md:hidden border-t border-slate-200 pt-3 pb-3 bg-slate-50/50">
+          <div className="md:hidden border-t border-slate-200/50 pt-4 pb-4 bg-gradient-to-r from-slate-50/80 to-white/80 backdrop-blur-sm animate-slide-up">
             <div className="flex space-x-3">
-              {!isStaff && (
-                <Button
-                  variant={currentView === 'citizen' ? 'default' : 'ghost'}
-                  onClick={() => onViewChange('citizen')}
-                  className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
-                    currentView === 'citizen' 
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md' 
-                      : 'hover:bg-orange-50 hover:text-orange-600'
-                  }`}
-                  size="sm"
-                >
-                  <Home className="h-4 w-4" />
-                  {t('nav.citizenPortal')}
-                </Button>
-              )}
+              {/* Always show citizen portal for all users */}
+              <Button
+                variant={currentView === 'citizen' ? 'default' : 'ghost'}
+                onClick={() => onViewChange('citizen')}
+                className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
+                  currentView === 'citizen' 
+                    ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md' 
+                    : 'hover:bg-orange-50 hover:text-orange-600'
+                }`}
+                size="sm"
+              >
+                <Home className="h-4 w-4" />
+                {t('nav.citizenPortal')}
+              </Button>
               
+              {/* Only show admin dashboard for staff */}
               {isStaff && (
                 <Button
                   variant={currentView === 'admin' ? 'default' : 'ghost'}

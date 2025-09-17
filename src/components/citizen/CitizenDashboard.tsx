@@ -24,7 +24,8 @@ import {
   BarChart3,
   ExternalLink,
   FileText,
-  Hash
+  Hash,
+  User
 } from 'lucide-react';
 import ReportForm from './ReportForm';
 import CitizenMapView from './MapView';
@@ -260,6 +261,7 @@ export default function CitizenDashboard() {
     }
   };
 
+  // Prince's enhanced card design with some main branch elements integrated
   const ReportCard = ({ report }: { report: Report }) => {
     const statusConfig = getStatusConfig(t);
     const priorityConfig = getPriorityConfig(t);
@@ -470,13 +472,20 @@ export default function CitizenDashboard() {
 
   if (showReportForm) {
     return (
-      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
-        <div className="mb-4 sm:mb-6">
-          <Button variant="outline" onClick={() => setShowReportForm(false)} size="sm">
+      <div className="container-responsive py-6 animate-fade-in">
+        <div className="mb-6 animate-slide-up">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowReportForm(false)} 
+            className="hover:scale-105 transition-all duration-200"
+            size="sm"
+          >
             {t('citizen.backToDashboard')}
           </Button>
         </div>
-        <ReportForm onSuccess={() => setShowReportForm(false)} />
+        <div className="animate-scale-in">
+          <ReportForm onSuccess={() => setShowReportForm(false)} />
+        </div>
       </div>
     );
   }
@@ -756,7 +765,37 @@ export default function CitizenDashboard() {
             )}
 
             {activeTab === 'myreports' && (
-              <MyReports />
+              <>
+                {!user ? (
+                  <div className="text-center py-16">
+                    <User className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                    <p className="text-lg font-semibold text-gray-700 mb-2">{t('citizen.signInToView')}</p>
+                    <p className="text-gray-600">Please sign in to view your reports</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {myReports.length === 0 ? (
+                      <div className="text-center py-16">
+                        <Plus className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                        <p className="text-lg font-semibold text-gray-700 mb-2">{t('citizen.noMyReports')}</p>
+                        <p className="text-gray-600 mb-8">{t('citizen.noMyReportsDesc')}</p>
+                        <Button 
+                          onClick={() => setShowReportForm(true)}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                          size="lg"
+                        >
+                          <Plus className="mr-2 h-5 w-5" />
+                          {t('citizen.submitFirst')}
+                        </Button>
+                      </div>
+                    ) : (
+                      myReports.map((report) => (
+                        <ReportCard key={report.id} report={report} />
+                      ))
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             {activeTab === 'track' && (
@@ -828,7 +867,6 @@ export default function CitizenDashboard() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
