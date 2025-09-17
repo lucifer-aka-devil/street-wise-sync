@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -18,10 +19,18 @@ import {
   XCircle,
   Filter,
   Map,
+  Search,
+  Settings,
+  BarChart3,
+  ExternalLink,
+  FileText,
+  Hash,
   User
 } from 'lucide-react';
 import ReportForm from './ReportForm';
 import CitizenMapView from './MapView';
+import MyReports from './MyReports';
+import TrackReport from './TrackReport';
 
 interface Report {
   id: string;
@@ -43,16 +52,16 @@ interface Report {
 }
 
 const getStatusConfig = (t: (key: string) => string) => ({
-  submitted: { label: t('status.submitted'), icon: Clock, color: 'bg-blue-500' },
+  submitted: { label: t('status.submitted'), icon: Clock, color: 'bg-orange-500' },
   acknowledged: { label: t('status.acknowledged'), icon: Eye, color: 'bg-yellow-500' },
-  in_progress: { label: t('status.in_progress'), icon: AlertCircle, color: 'bg-orange-500' },
+  in_progress: { label: t('status.in_progress'), icon: AlertCircle, color: 'bg-amber-500' },
   resolved: { label: t('status.resolved'), icon: CheckCircle, color: 'bg-green-500' },
   rejected: { label: t('status.rejected'), icon: XCircle, color: 'bg-red-500' },
 });
 
 const getPriorityConfig = (t: (key: string) => string) => ({
   low: { label: t('priority.low'), color: 'bg-gray-500' },
-  medium: { label: t('priority.medium'), color: 'bg-blue-500' },
+  medium: { label: t('priority.medium'), color: 'bg-amber-500' },
   high: { label: t('priority.high'), color: 'bg-orange-500' },
   urgent: { label: t('priority.urgent'), color: 'bg-red-500' },
 });
@@ -64,12 +73,17 @@ export default function CitizenDashboard() {
   const [myReports, setMyReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [showReportForm, setShowReportForm] = useState(false);
-  const [activeTab, setActiveTab] = useState('all');
-  const [showMapView, setShowMapView] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     fetchReports();
     fetchMyReports();
+    fetchCategories();
 
     // Set up real-time subscription for reports and votes
     const channel = supabase
@@ -148,6 +162,20 @@ export default function CitizenDashboard() {
     }
 
     setMyReports((data || []) as Report[]);
+  };
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .order('name');
+
+    if (error) {
+      console.error('Error fetching categories:', error);
+      return;
+    }
+
+    setCategories(data || []);
   };
 
   const handleVote = async (reportId: string, hasVoted: boolean) => {
@@ -233,94 +261,214 @@ export default function CitizenDashboard() {
     }
   };
 
+  // Prince's enhanced card design with some main branch elements integrated
   const ReportCard = ({ report }: { report: Report }) => {
     const statusConfig = getStatusConfig(t);
     const priorityConfig = getPriorityConfig(t);
     const StatusIcon = statusConfig[report.status].icon;
     
     return (
-      <Card className="card-interactive rounded-2xl overflow-hidden shadow-medium hover:shadow-large border-0 transition-all duration-300 hover:scale-[1.02] bg-white/90 backdrop-blur-sm">
-        <CardHeader className="pb-4 bg-gradient-to-r from-white/50 to-slate-50/50">
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-start gap-4">
-              <div className="space-y-2 min-w-0 flex-1">
-                <CardTitle className="text-lg sm:text-xl font-bold text-slate-800 leading-tight line-clamp-2">{report.title}</CardTitle>
-                <CardDescription className="flex items-center gap-2 text-sm text-slate-600">
-                  <MapPin className="h-4 w-4 flex-shrink-0 text-emerald-600" />
-                  <span className="truncate">{report.address || t('citizen.locationNotSpecified')}</span>
-                </CardDescription>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <div className={`w-4 h-4 rounded-full ${statusConfig[report.status].color} shadow-sm animate-pulse`}></div>
-              </div>
+      <Card className="group bg-gradient-to-br from-white to-orange-50/30 border border-orange-100/50 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-orange-200/80 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-amber-400"></div>
+        
+        <CardHeader className="pb-3 pt-4">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="min-w-0 flex-1">
+              <CardTitle className="text-base font-bold text-slate-800 leading-tight mb-1 group-hover:text-orange-700 transition-colors">
+                {report.title}
+              </CardTitle>
+              <CardDescription className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
+                <Hash className="h-3 w-3 flex-shrink-0 text-orange-500" />
+                <span className="font-mono text-xs break-all">{report.id}</span>
+              </CardDescription>
+              <CardDescription className="flex items-center gap-1.5 text-xs text-slate-500">
+                <MapPin className="h-3 w-3 flex-shrink-0 text-orange-500" />
+                <span className="truncate">{report.address || t('citizen.locationNotSpecified')}</span>
+              </CardDescription>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 bg-white/80 hover:bg-white transition-colors">
-                <div 
-                  className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm" 
-                  style={{ backgroundColor: report.categories?.color }}
-                />
-                <span className="font-medium">{report.categories?.name}</span>
-              </Badge>
-              <Badge 
-                className={`${priorityConfig[report.priority].color} text-white text-xs font-semibold px-3 py-1.5 shadow-sm hover:shadow-md transition-all`}
-              >
-                {priorityConfig[report.priority].label}
-              </Badge>
-            </div>
+            <div className={`w-2.5 h-2.5 rounded-full ${statusConfig[report.status].color} shadow-sm`}></div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="flex items-center gap-1 text-xs px-2 py-0.5 border-orange-200 text-orange-700 bg-orange-50/50">
+              <div 
+                className="w-1.5 h-1.5 rounded-full" 
+                style={{ backgroundColor: report.categories?.color }}
+              />
+              <span className="font-medium">{report.categories?.name}</span>
+            </Badge>
+            <Badge 
+              className={`${priorityConfig[report.priority].color} text-white text-xs px-2 py-0.5 shadow-sm`}
+            >
+              {priorityConfig[report.priority].label}
+            </Badge>
           </div>
         </CardHeader>
-        <CardContent className="pt-0 space-y-5">
-          <p className="text-sm text-body line-clamp-3 leading-relaxed">{report.description}</p>
+
+        <CardContent className="pt-0 pb-4 space-y-3">
+          <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">{report.description}</p>
           
           {report.photos && report.photos.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {report.photos.slice(0, 3).map((photo, index) => (
+            <div className="flex gap-1.5 overflow-hidden">
+              {report.photos.slice(0, 2).map((photo, index) => (
                 <img
                   key={index}
                   src={photo}
-                  alt={`Report photo ${index + 1}`}
-                  className="w-full h-24 object-cover rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer hover:scale-105"
+                  alt={`Report ${index + 1}`}
+                  className="w-16 h-16 object-cover rounded-md shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-orange-100"
                   loading="lazy"
                 />
               ))}
-              {report.photos.length > 3 && (
-                <div className="w-full h-24 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-600 font-semibold hover:from-slate-200 hover:to-slate-300 transition-colors cursor-pointer">
-                  +{report.photos.length - 3} more
+              {report.photos.length > 2 && (
+                <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-md flex items-center justify-center text-xs text-orange-600 font-bold border border-orange-200">
+                  +{report.photos.length - 2}
                 </div>
               )}
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-3 border-t border-slate-200/60">
-            <div className="flex items-center gap-4 text-xs text-slate-500">
-              <div className="flex items-center gap-1.5">
-                <StatusIcon className="h-4 w-4 text-slate-600" />
+          <div className="flex items-center justify-between pt-2 border-t border-orange-100/50">
+            <div className="flex items-center gap-3 text-xs text-slate-500">
+              <div className="flex items-center gap-1">
+                <StatusIcon className="h-3 w-3" />
                 <span className="font-medium">{statusConfig[report.status].label}</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-slate-600" />
-                <span>{new Date(report.created_at).toLocaleDateString()}</span>
-              </div>
+              <span className="text-slate-400">•</span>
+              <span>{new Date(report.created_at).toLocaleDateString()}</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => handleVote(report.id, report.user_voted || false)}
-              className={`flex items-center gap-2 text-sm font-semibold transition-all duration-300 touch-target hover:scale-105 rounded-xl px-4 py-2 ${
+              className={`flex items-center gap-1 text-xs font-bold px-2 py-1 h-7 rounded-full transition-all ${
                 report.user_voted 
-                  ? 'text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 shadow-sm' 
-                  : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50 shadow-sm hover:shadow-md'
+                  ? 'text-orange-600 hover:text-orange-700 bg-orange-100 hover:bg-orange-200 shadow-sm' 
+                  : 'text-slate-500 hover:text-orange-600 hover:bg-orange-50'
               }`}
             >
-              <ThumbsUp className="h-4 w-4" />
-              <span className="font-bold">{report.votes_count}</span>
+              <ThumbsUp className="h-3 w-3" />
+              {report.votes_count}
             </Button>
           </div>
         </CardContent>
       </Card>
     );
   };
+
+  const ReportListItem = ({ report }: { report: Report }) => {
+    const statusConfig = getStatusConfig(t);
+    const priorityConfig = getPriorityConfig(t);
+    const StatusIcon = statusConfig[report.status].icon;
+    
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 hover:shadow-md transition-shadow">
+        <div className="flex items-start gap-3 sm:gap-4">
+          {/* Avatar */}
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
+            {report.title.charAt(0).toUpperCase()}
+          </div>
+          
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{report.title}</h3>
+                  <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded break-all">{report.id}</span>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">{report.description}</p>
+                
+                {/* Images */}
+                {report.photos && report.photos.length > 0 && (
+                  <div className="flex gap-2 mb-2 overflow-x-auto">
+                    {report.photos.slice(0, 3).map((photo, index) => (
+                      <img
+                        key={index}
+                        src={photo}
+                        alt={`Report ${index + 1}`}
+                        className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                        loading="lazy"
+                        onClick={() => window.open(photo, '_blank')}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                    ))}
+                    {report.photos.length > 3 && (
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-md flex items-center justify-center text-xs text-gray-600 font-medium border border-gray-200 flex-shrink-0">
+                        +{report.photos.length - 3}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex sm:flex-col items-start sm:items-end gap-2 sm:ml-4">
+                <div className="text-xs text-gray-500">
+                  {new Date(report.created_at).toLocaleDateString()}
+                </div>
+                <Badge 
+                  className={`${statusConfig[report.status].color} text-white text-xs`}
+                >
+                  {statusConfig[report.status].label}
+                </Badge>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                  <span className="truncate max-w-[150px] sm:max-w-none">{report.address || 'Location not specified'}</span>
+                </div>
+                
+                <div className="flex items-center gap-1">
+                  <div 
+                    className="w-2 h-2 rounded-full flex-shrink-0" 
+                    style={{ backgroundColor: report.categories?.color }}
+                  />
+                  <span className="truncate">{report.categories?.name}</span>
+                </div>
+                
+                <Badge 
+                  className={`${priorityConfig[report.priority].color} text-white text-xs`}
+                >
+                  {priorityConfig[report.priority].label}
+                </Badge>
+              </div>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleVote(report.id, report.user_voted || false)}
+                className={`flex items-center gap-1 text-xs self-start sm:self-auto ${
+                  report.user_voted 
+                    ? 'text-blue-600 hover:text-blue-700' 
+                    : 'text-gray-500 hover:text-blue-600'
+                }`}
+              >
+                <ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                {report.votes_count}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Filter reports based on search and filters
+  const filteredReports = reports.filter(report => {
+    const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         report.address?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || report.status === statusFilter;
+    const matchesPriority = priorityFilter === 'all' || report.priority === priorityFilter;
+    const matchesCategory = categoryFilter === 'all' || report.categories?.name === categoryFilter;
+    
+    return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
+  });
 
   if (showReportForm) {
     return (
@@ -343,126 +491,381 @@ export default function CitizenDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 animate-fade-in">
-      <div className="container-responsive py-6 sm:py-8 lg:py-10">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 sm:mb-12 animate-slide-up">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-responsive-lg font-bold text-heading mb-3">
-              {t('citizen.title')}
-            </h1>
-            <p className="text-responsive-sm text-body max-w-2xl">
-              {t('citizen.subtitle')}
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col lg:flex-row">
+        {/* Left Sidebar - Hidden on mobile, shown as bottom nav */}
+        <div className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+            
+            <nav className="space-y-2">
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeTab === 'dashboard' 
+                    ? 'bg-gray-100 text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <BarChart3 className="h-5 w-5" />
+                Dashboard
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('map')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeTab === 'map' 
+                    ? 'bg-gray-100 text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <Map className="h-5 w-5" />
+                Map View
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('myreports')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeTab === 'myreports' 
+                    ? 'bg-gray-100 text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <FileText className="h-5 w-5" />
+                My Reports
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('track')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeTab === 'track' 
+                    ? 'bg-gray-100 text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <Search className="h-5 w-5" />
+                Track Report
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('settings')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  activeTab === 'settings' 
+                    ? 'bg-gray-100 text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <Settings className="h-5 w-5" />
+                Settings
+              </button>
+            </nav>
           </div>
-          <Button 
-            onClick={() => setShowReportForm(true)}
-            className="w-full sm:w-auto btn-primary touch-target hover:scale-105 shadow-glow"
-            size="lg"
-          >
-            <Plus className="mr-2 h-5 w-5" />
-            <span className="sm:hidden">{t('citizen.reportIssue')}</span>
-            <span className="hidden sm:inline">{t('citizen.newReport')}</span>
-          </Button>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full animate-slide-up">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg bg-white/80 backdrop-blur-sm border border-white/30 shadow-soft rounded-xl">
-            <TabsTrigger 
-              value="all" 
-              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 rounded-lg transition-all duration-200"
+        {/* Mobile Navigation */}
+        <div className="lg:hidden bg-white border-b border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+              </div>
+              <h1 className="text-lg font-bold text-gray-900">Civic Dashboard</h1>
+            </div>
+          </div>
+          
+          <nav className="flex space-x-1">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                activeTab === 'dashboard' 
+                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
             >
-              {t('citizen.allReports')}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="mine" 
-              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 rounded-lg transition-all duration-200"
-            >
-              {t('citizen.myReports')}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="map" 
-              className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 flex items-center gap-1 rounded-lg transition-all duration-200"
+              <BarChart3 className="h-4 w-4" />
+              Dashboard
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('map')}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                activeTab === 'map' 
+                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
             >
               <Map className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('citizen.mapView')}</span>
-              <span className="sm:hidden">Map</span>
-            </TabsTrigger>
-          </TabsList>
+              Map
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('myreports')}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                activeTab === 'myreports' 
+                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <FileText className="h-4 w-4" />
+              My Reports
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('track')}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                activeTab === 'track' 
+                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Search className="h-4 w-4" />
+              Track
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                activeTab === 'settings' 
+                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Settings className="h-4 w-4" />
+              Settings
+            </button>
+          </nav>
+        </div>
 
-          <TabsContent value="all" className="mt-8 space-y-6 animate-fade-in">
-            <div className="grid-responsive">
-              {loading ? (
-                <div className="col-span-full flex items-center justify-center py-20">
-                  <div className="text-center animate-pulse">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-spin">
-                      <div className="w-8 h-8 bg-white rounded-full"></div>
-                    </div>
-                    <p className="text-body text-lg">{t('citizen.loading')}</p>
-                  </div>
-                </div>
-              ) : reports.length === 0 ? (
-                <div className="col-span-full text-center py-20 animate-scale-in">
-                  <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                    <Filter className="h-12 w-12 text-slate-400" />
-                  </div>
-                  <p className="text-lg font-semibold text-slate-700 mb-3">{t('citizen.noReports')}</p>
-                  <p className="text-body max-w-md mx-auto">{t('citizen.noReportsDesc')}</p>
-                </div>
-              ) : (
-                reports.map((report, index) => (
-                  <div key={report.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                    <ReportCard report={report} />
-                  </div>
-                ))
-              )}
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col lg:flex-row">
+          <div className="flex-1 p-3 sm:p-6">
+            {/* Header - Hidden on mobile since it's in mobile nav */}
+            <div className="hidden lg:block mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                Civic Issue Dashboard
+              </h1>
+              <p className="text-gray-600">
+                View and track all reported civic issues in Jharkhand
+              </p>
             </div>
-          </TabsContent>
 
-          <TabsContent value="mine" className="mt-8 space-y-6 animate-fade-in">
-            {!user ? (
-              <div className="card-elevated rounded-2xl">
-                <div className="pt-12 pb-8 text-center">
-                  <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                    <User className="h-10 w-10 text-blue-600" />
+            {activeTab === 'dashboard' && (
+              <>
+                {/* Search and Filters */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
+                  <div className="flex flex-col gap-3 sm:gap-4">
+                    <div className="w-full">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <Input
+                          placeholder="Search complaints, issues, locations..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="pl-10 text-sm"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Ministry</p>
+                        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder="All" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All</SelectItem>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.name}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</p>
+                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder="All" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All</SelectItem>
+                            <SelectItem value="submitted">Submitted</SelectItem>
+                            <SelectItem value="acknowledged">Acknowledged</SelectItem>
+                            <SelectItem value="in_progress">In Progress</SelectItem>
+                            <SelectItem value="resolved">Resolved</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Priority</p>
+                        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder="All" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="urgent">Urgent</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="flex items-end">
+                        <div className="bg-blue-600 text-white px-3 py-2 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap">
+                          {filteredReports.length} Total
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-body text-xl font-medium">{t('citizen.signInToView')}</p>
                 </div>
-              </div>
-            ) : (
-              <div className="grid-responsive">
-                {myReports.length === 0 ? (
-                  <div className="col-span-full text-center py-20 animate-scale-in">
-                    <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                      <Plus className="h-12 w-12 text-green-600" />
+
+                {/* Reports List */}
+                <div className="space-y-4">
+                  {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                      <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+                        <p className="text-slate-700 font-medium">{t('citizen.loading')}</p>
+                      </div>
                     </div>
-                    <p className="text-lg font-semibold text-slate-700 mb-3">{t('citizen.noMyReports')}</p>
-                    <p className="text-body mb-8 max-w-md mx-auto">{t('citizen.noMyReportsDesc')}</p>
-                    <Button 
-                      className="btn-success touch-target hover:scale-105 shadow-glow-green" 
-                      onClick={() => setShowReportForm(true)}
-                      size="lg"
-                    >
-                      <Plus className="mr-2 h-5 w-5" />
-                      {t('citizen.submitFirst')}
-                    </Button>
-                  </div>
-                ) : (
-                  myReports.map((report, index) => (
-                    <div key={report.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                      <ReportCard report={report} />
+                  ) : filteredReports.length === 0 ? (
+                    <div className="text-center py-16">
+                      <Filter className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                      <p className="text-lg font-semibold text-gray-700 mb-2">No reports found</p>
+                      <p className="text-gray-600">Try adjusting your search or filters</p>
                     </div>
-                  ))
-                )}
+                  ) : (
+                    filteredReports.map((report) => (
+                      <ReportListItem key={report.id} report={report} />
+                    ))
+                  )}
+                </div>
+              </>
+            )}
+
+            {activeTab === 'map' && (
+              <div className="h-[calc(100vh-200px)]">
+                <CitizenMapView />
               </div>
             )}
-          </TabsContent>
 
-          <TabsContent value="map" className="mt-8 animate-fade-in">
-            <div className="h-[500px] sm:h-[600px] lg:h-[700px] rounded-2xl overflow-hidden shadow-large">
-              <CitizenMapView />
+            {activeTab === 'myreports' && (
+              <>
+                {!user ? (
+                  <div className="text-center py-16">
+                    <User className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                    <p className="text-lg font-semibold text-gray-700 mb-2">{t('citizen.signInToView')}</p>
+                    <p className="text-gray-600">Please sign in to view your reports</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {myReports.length === 0 ? (
+                      <div className="text-center py-16">
+                        <Plus className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                        <p className="text-lg font-semibold text-gray-700 mb-2">{t('citizen.noMyReports')}</p>
+                        <p className="text-gray-600 mb-8">{t('citizen.noMyReportsDesc')}</p>
+                        <Button 
+                          onClick={() => setShowReportForm(true)}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                          size="lg"
+                        >
+                          <Plus className="mr-2 h-5 w-5" />
+                          {t('citizen.submitFirst')}
+                        </Button>
+                      </div>
+                    ) : (
+                      myReports.map((report) => (
+                        <ReportCard key={report.id} report={report} />
+                      ))
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeTab === 'track' && (
+              <TrackReport />
+            )}
+
+            {activeTab === 'settings' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings</h2>
+                <p className="text-gray-600">Settings panel coming soon...</p>
+              </div>
+            )}
+          </div>
+
+          {/* Right Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block w-80 bg-white border-l border-gray-200 p-6">
+            {/* Call to Action */}
+            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg p-6 text-white mb-6">
+              <h3 className="text-lg font-bold mb-2">
+                Help Build a Better Jharkhand
+              </h3>
+              <p className="text-sm mb-4 opacity-90">
+                Report civic issues and track their resolution in real-time.
+              </p>
+              <Button 
+                onClick={() => setShowReportForm(true)}
+                className="w-full bg-white text-orange-600 hover:bg-gray-50 font-semibold"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                REPORT ISSUE
+              </Button>
             </div>
-          </TabsContent>
-        </Tabs>
+
+            {/* Legal & Information */}
+            <div>
+              <h4 className="text-sm font-semibold text-orange-600 mb-3">
+                Legal & Information
+              </h4>
+              <div className="space-y-2">
+                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+                  Terms of Service
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+                  Privacy Policy
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+                  Accessibility
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+                  RTI Portal
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile Floating Action Button */}
+          <div className="lg:hidden fixed bottom-6 right-6 z-50">
+            <Button 
+              onClick={() => setShowReportForm(true)}
+              className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+              size="icon"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

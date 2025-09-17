@@ -41,7 +41,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
       {/* Language Selector - Fixed position */}
       <div className="fixed top-4 right-4 z-50">
         <LanguageSelector />
@@ -53,7 +53,7 @@ export default function AuthPage() {
           {/* Header Section */}
           <div className="space-y-6">
             <div className="flex items-center justify-center lg:justify-start gap-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg overflow-hidden">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg overflow-hidden">
                 <img
                   src="/logo.png"
                   alt="Jharkhand Government Logo"
@@ -61,7 +61,7 @@ export default function AuthPage() {
                 />
               </div>
               <div className="text-left">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                   Government of Jharkhand
                 </h1>
                 <p className="text-lg sm:text-xl text-slate-600 font-medium">Civic Reporting Portal</p>
@@ -78,8 +78,8 @@ export default function AuthPage() {
           {/* Features Grid */}
           <div className="grid sm:grid-cols-1 gap-6 max-w-2xl mx-auto lg:mx-0">
             <div className="flex items-start gap-4 p-4 rounded-xl bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="p-3 bg-blue-100 rounded-xl flex-shrink-0">
-                <MapPin className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-orange-100 rounded-xl flex-shrink-0">
+                <MapPin className="h-6 w-6 text-orange-600" />
               </div>
               <div className="text-left">
                 <h3 className="font-semibold text-slate-800 text-lg">{t('auth.locationTitle')}</h3>
@@ -140,7 +140,7 @@ export default function AuthPage() {
                         type="email"
                         placeholder={t('auth.emailPlaceholder')}
                         required
-                        className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-11 bg-white/50 border-slate-200 focus:border-orange-500 focus:ring-orange-500"
                       />
                     </div>
                     <div className="space-y-2">
@@ -150,12 +150,12 @@ export default function AuthPage() {
                         name="password"
                         type="password"
                         required
-                        className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-11 bg-white/50 border-slate-200 focus:border-orange-500 focus:ring-orange-500"
                       />
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                      className="w-full h-11 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
                       disabled={isLoading || loading}
                     >
                       {isLoading ? (
@@ -180,7 +180,7 @@ export default function AuthPage() {
                         type="text"
                         placeholder={t('auth.fullNamePlaceholder')}
                         required
-                        className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-11 bg-white/50 border-slate-200 focus:border-orange-500 focus:ring-orange-500"
                       />
                     </div>
                     <div className="space-y-2">
@@ -191,7 +191,7 @@ export default function AuthPage() {
                         type="email"
                         placeholder={t('auth.emailPlaceholder')}
                         required
-                        className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-11 bg-white/50 border-slate-200 focus:border-orange-500 focus:ring-orange-500"
                       />
                     </div>
                     <div className="space-y-2">
@@ -203,12 +203,12 @@ export default function AuthPage() {
                         required
                         minLength={6}
                         placeholder={t('auth.passwordPlaceholder')}
-                        className="h-11 bg-white/50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                        className="h-11 bg-white/50 border-slate-200 focus:border-orange-500 focus:ring-orange-500"
                       />
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full h-11 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
+                      className="w-full h-11 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200" 
                       disabled={isLoading || loading}
                     >
                       {isLoading ? (
