@@ -483,26 +483,6 @@ export default function TrackReport() {
           </div>
         </div>
       )}
-
-      {/* Help Section */}
-      {!report && !loading && (
-        <Card className="bg-gray-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">How to find your Report ID</h3>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Check your email confirmation after submitting a report</li>
-                  <li>• Visit the "My Reports" section to see all your submitted reports</li>
-                  <li>• Report IDs can be entered as short codes (e.g., #5f240311) or full UUIDs</li>
-                  <li>• Both formats will work: #5f240311 or 5f240311-aaec-48ce-a46e-5314dd9aecc8</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

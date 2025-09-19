@@ -44,21 +44,23 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
             {/* Navigation Buttons - Prince's design with conditional rendering */}
             {user && (
               <div className="hidden md:flex space-x-3">
-                {/* Always show citizen portal for all users */}
-                <Button
-                  variant={currentView === 'citizen' ? 'default' : 'ghost'}
-                  onClick={() => onViewChange('citizen')}
-                  className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
-                    currentView === 'citizen' 
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:shadow-xl' 
-                      : 'hover:bg-orange-50 hover:text-orange-600'
-                  }`}
-                  size="sm"
-                >
-                  <Home className="h-4 w-4" />
-                  <span className="hidden lg:inline">{t('nav.citizenPortal')}</span>
-                  <span className="lg:hidden">{t('nav.citizen')}</span>
-                </Button>
+                {/* Show citizen portal only for non-staff users */}
+                {!isStaff && (
+                  <Button
+                    variant={currentView === 'citizen' ? 'default' : 'ghost'}
+                    onClick={() => onViewChange('citizen')}
+                    className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
+                      currentView === 'citizen' 
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-orange-50 hover:text-orange-600'
+                    }`}
+                    size="sm"
+                  >
+                    <Home className="h-4 w-4" />
+                    <span className="hidden lg:inline">{t('nav.citizenPortal')}</span>
+                    <span className="lg:hidden">{t('nav.citizen')}</span>
+                  </Button>
+                )}
                 
                 {/* Only show admin dashboard for staff */}
                 {isStaff && (
@@ -137,20 +139,22 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
         {user && (
           <div className="md:hidden border-t border-slate-200/50 pt-4 pb-4 bg-gradient-to-r from-slate-50/80 to-white/80 backdrop-blur-sm animate-slide-up">
             <div className="flex space-x-3">
-              {/* Always show citizen portal for all users */}
-              <Button
-                variant={currentView === 'citizen' ? 'default' : 'ghost'}
-                onClick={() => onViewChange('citizen')}
-                className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
-                  currentView === 'citizen' 
-                    ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md' 
-                    : 'hover:bg-orange-50 hover:text-orange-600'
-                }`}
-                size="sm"
-              >
-                <Home className="h-4 w-4" />
-                {t('nav.citizenPortal')}
-              </Button>
+              {/* Show citizen portal only for non-staff users */}
+              {!isStaff && (
+                <Button
+                  variant={currentView === 'citizen' ? 'default' : 'ghost'}
+                  onClick={() => onViewChange('citizen')}
+                  className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
+                    currentView === 'citizen' 
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md' 
+                      : 'hover:bg-orange-50 hover:text-orange-600'
+                  }`}
+                  size="sm"
+                >
+                  <Home className="h-4 w-4" />
+                  {t('nav.citizenPortal')}
+                </Button>
+              )}
               
               {/* Only show admin dashboard for staff */}
               {isStaff && (
