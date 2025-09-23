@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 export type Language = 'en' | 'hi';
 
@@ -78,7 +78,7 @@ const translations = {
     'nav.portal': 'Civic Reporting Portal',
     'nav.citizenPortal': 'Citizen Portal',
     'nav.citizen': 'Citizen',
-    'nav.adminDashboard': 'Admin Dashboard',
+    'nav.adminDashboard': 'Super Admin Dashboard',
     'nav.admin': 'Admin',
     'nav.signOut': 'Sign Out',
     'nav.signInPrompt': 'Please sign in to access the platform',
@@ -223,7 +223,7 @@ const translations = {
     'nav.portal': 'नागरिक रिपोर्टिंग पोर्टल',
     'nav.citizenPortal': 'नागरिक पोर्टल',
     'nav.citizen': 'नागरिक',
-    'nav.adminDashboard': 'एडमिन डैशबोर्ड',
+    'nav.adminDashboard': 'सुपर एडमिन डैशबोर्ड',
     'nav.admin': 'एडमिन',
     'nav.signOut': 'साइन आउट',
     'nav.signInPrompt': 'प्लेटफॉर्म एक्सेस करने के लिए कृपया साइन इन करें',

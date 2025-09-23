@@ -11,17 +11,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { Edit, Eye, EyeOff, Filter, Loader, Settings, Shield, Trash2, TrendingUp, UserPlus, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts';
 import ReportCard from './ReportCard';
 
@@ -169,7 +169,7 @@ export default function EnhancedAdminDashboard() {
       setShowGenuineOnly(!showGenuineOnly);
       setIsFilteringGenuine(false);
       toast({
-        title: showGenuineOnly ? "All complaints shown" : "Genuine complaints filtered",
+        title: showGenuineOnly ? "All complaints shown" : "Valid complaints filtered",
         description: showGenuineOnly ? "Showing all complaints now" : "Now showing only complaints with images",
       });
     }, 2000);
@@ -419,7 +419,7 @@ export default function EnhancedAdminDashboard() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 bg-clip-text text-transparent mb-2">
-                Advanced Admin Dashboard
+                Super Admin Dashboard
               </h1>
               <p className="text-base sm:text-lg text-slate-600 mb-4">Real-time analytics with enhanced insights and complaint management</p>
               
@@ -435,7 +435,7 @@ export default function EnhancedAdminDashboard() {
                 {showGenuineOnly && (
                   <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
                     <Filter className="w-3 h-3 mr-1" />
-                    Genuine Filter Active
+                    Valid Filter Active
                   </Badge>
                 )}
                 {autoAssignEnabled && (
@@ -588,13 +588,13 @@ export default function EnhancedAdminDashboard() {
                       {isFilteringGenuine ? (
                         <>
                           <Loader className="w-4 h-4 mr-2 animate-spin" />
-                          Filtering genuine complaints...
+                          Filtering valid complaints...
                         </>
                       ) : (
                         <>
                           {showGenuineOnly ? <EyeOff /> : <Eye />}
                           <span className="ml-2">
-                            {showGenuineOnly ? 'Show All' : 'Filter Genuine'}
+                            {showGenuineOnly ? 'Show All' : 'Filter Valid'}
                           </span>
                         </>
                       )}
@@ -612,7 +612,7 @@ export default function EnhancedAdminDashboard() {
                   <div className="text-center py-12">
                     <Filter className="w-16 h-16 mx-auto text-slate-300 mb-4" />
                     <h3 className="text-lg font-semibold text-slate-700 mb-2">
-                      {showGenuineOnly ? 'No Genuine Complaints Found' : 'No Complaints Found'}
+                      {showGenuineOnly ? 'Valid Complaints Filtered' : 'No Complaints Found'}
                     </h3>
                     <p className="text-slate-500 mb-4">
                       {showGenuineOnly 
@@ -624,7 +624,7 @@ export default function EnhancedAdminDashboard() {
                 ) : (
                   <div className="grid gap-4">
                     {filteredComplaints.map((report) => (
-                      <ReportCard key={report.id} report={report} departments={departments} staff={[]} onAssignReport={() => {}} onUpdateReport={() => {}} onUpdatePriority={() => {}} onDeleteReport={() => {}} />
+                      <ReportCard key={report.id} report={report} departments={departments} staff={[]} onAssignReport={async (_reportId: string, _departmentId: string) => {}} onUpdateReport={async (_reportId: string, _status: string, _assignedTo?: string, _message?: string) => {}} onUpdatePriority={async (_reportId: string, _priority: string) => {}} onDeleteReport={async (_reportId: string) => {}} />
                     ))}
                   </div>
                 )}
@@ -837,7 +837,7 @@ export default function EnhancedAdminDashboard() {
         <DialogContent className="max-w-sm">
           <div className="text-center py-6">
             <Loader className="w-8 h-8 mx-auto animate-spin text-purple-600 mb-4" />
-            <p className="text-lg font-semibold text-slate-800">Filtering genuine complaints...</p>
+            <p className="text-lg font-semibold text-slate-800">Filtering valid complaints... Stage 1</p>
             <p className="text-sm text-slate-600 mt-2">Analyzing complaints with image evidence</p>
           </div>
         </DialogContent>
