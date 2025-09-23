@@ -1,72 +1,29 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar, TrendingUp, TrendingDown, Filter, Download, RefreshCw, Plus, Users, UserPlus, Settings, Loader, Eye, EyeOff, Shield, Trash2, Edit } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Edit, Eye, EyeOff, Filter, Loader, Settings, Shield, Trash2, TrendingUp, UserPlus, Users } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  BarChart,
-  Bar,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  ComposedChart,
-  Legend,
-  RadialBarChart,
-  RadialBar,
-  ScatterChart,
-  Scatter
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Cell,
+    Legend,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
 } from 'recharts';
-
-// Mock data for demonstration - replace with actual Supabase integration
-const generateMockData = () => {
-  const categories = ['Road & Transport', 'Water Supply', 'Electricity', 'Sanitation', 'Public Safety', 'Healthcare', 'Education', 'Environment'];
-  const statuses = ['submitted', 'acknowledged', 'in_progress', 'resolved', 'rejected'];
-  const priorities = ['low', 'medium', 'high', 'critical'];
-  const departments = ['Municipal Corp', 'Water Board', 'Electricity Board', 'Health Dept', 'Traffic Police'];
-
-  const reports = [];
-  const now = new Date();
-  
-  for (let i = 0; i < 500; i++) {
-    const createdDate = new Date(now.getTime() - Math.random() * 90 * 24 * 60 * 60 * 1000);
-    const resolvedDate = Math.random() > 0.4 ? new Date(createdDate.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000) : null;
-    const hasImages = Math.random() > 0.3; // 70% chance of having images
-    
-    reports.push({
-      id: i,
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      priority: priorities[Math.floor(Math.random() * priorities.length)],
-      category: categories[Math.floor(Math.random() * categories.length)],
-      department: departments[Math.floor(Math.random() * departments.length)],
-      created_at: createdDate,
-      resolved_at: resolvedDate,
-      satisfaction_rating: Math.random() > 0.3 ? Math.floor(Math.random() * 5) + 1 : null,
-      hasImages: hasImages,
-      location: {
-        lat: 28.6139 + (Math.random() - 0.5) * 0.1,
-        lng: 77.2090 + (Math.random() - 0.5) * 0.1
-      }
-    });
-  }
-  
-  return reports;
-};
+import ReportCard from './ReportCard';
 
 interface TooltipProps {
   active?: boolean;
@@ -99,10 +56,10 @@ interface Department {
 }
 
 export default function EnhancedAdminDashboard() {
-  const [reports, setReports] = useState(generateMockData());
+  const [reports, setReports] = useState([]);
   const [timeRange, setTimeRange] = useState('30d');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   // New states for the requested features
   const [isFilteringGenuine, setIsFilteringGenuine] = useState(false);
@@ -122,9 +79,37 @@ export default function EnhancedAdminDashboard() {
 
   // Load data on component mount
   useEffect(() => {
+    fetchReports();
     fetchWorkers();
     fetchDepartments();
+    const channel = supabase
+      .channel('admin-dashboard-reports')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'reports' },
+        () => fetchReports()
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
+
+  const fetchReports = async () => {
+    setLoading(true);
+    try {
+      const { data: reportsData, error: reportsError } = await supabase
+        .from('reports')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (reportsError) throw reportsError;
+      setReports(reportsData || []);
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchWorkers = async () => {
     try {
@@ -278,17 +263,10 @@ export default function EnhancedAdminDashboard() {
 
   // Enhanced statistics with detailed calculations
   const stats = useMemo(() => {
-    let filteredReports = reports.filter(report => {
-      const daysDiff = (new Date().getTime() - new Date(report.created_at).getTime()) / (1000 * 60 * 60 * 24);
-      const timeFilter = timeRange === '7d' ? daysDiff <= 7 : 
-                        timeRange === '30d' ? daysDiff <= 30 : 
-                        timeRange === '90d' ? daysDiff <= 90 : true;
-      
-      const categoryFilter = selectedCategory === 'all' || report.category === selectedCategory;
-      const genuineFilter = !showGenuineOnly || report.hasImages;
-      
-      return timeFilter && categoryFilter && genuineFilter;
-    });
+    let filteredReports = reports;
+    if (showGenuineOnly) {
+      filteredReports = filteredReports.filter(r => (r.hasImages || (Array.isArray(r.photos) && r.photos.length > 0)));
+    }
 
     const totalReports = filteredReports.length;
     const submittedReports = filteredReports.filter(r => r.status === 'submitted').length;
@@ -326,14 +304,10 @@ export default function EnhancedAdminDashboard() {
 
   // Enhanced chart data
   const chartData = useMemo(() => {
-    let filteredReports = reports.filter(report => {
-      const daysDiff = (new Date().getTime() - new Date(report.created_at).getTime()) / (1000 * 60 * 60 * 24);
-      const timeFilter = timeRange === '7d' ? daysDiff <= 7 : 
-                        timeRange === '30d' ? daysDiff <= 30 : 
-                        timeRange === '90d' ? daysDiff <= 90 : true;
-      const genuineFilter = !showGenuineOnly || report.hasImages;
-      return timeFilter && genuineFilter;
-    });
+    let filteredReports = reports;
+    if (showGenuineOnly) {
+      filteredReports = filteredReports.filter(r => (r.hasImages || (Array.isArray(r.photos) && r.photos.length > 0)));
+    }
 
     // Status distribution with enhanced data
     const statusStats = [
@@ -427,6 +401,15 @@ export default function EnhancedAdminDashboard() {
     }
     return null;
   };
+
+  // Filtered complaints for display in the Complaints tab
+  const filteredComplaints = useMemo(() => {
+    let filtered = reports;
+    if (showGenuineOnly) {
+      filtered = filtered.filter(r => (r.hasImages || (Array.isArray(r.photos) && r.photos.length > 0)));
+    }
+    return filtered;
+  }, [reports, showGenuineOnly]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
@@ -620,21 +603,31 @@ export default function EnhancedAdminDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Filter className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                  <h3 className="text-lg font-semibold text-slate-700 mb-2">
-                    {showGenuineOnly ? 'Genuine Complaints Filtered' : 'All Complaints Shown'}
-                  </h3>
-                  <p className="text-slate-500 mb-4">
-                    {showGenuineOnly 
-                      ? `Showing ${stats.genuineReports} complaints with images out of ${stats.totalReports} total`
-                      : `Showing all ${stats.totalReports} complaints`
-                    }
-                  </p>
-                  <p className="text-sm text-slate-400">
-                    Genuine filter helps identify complaints with supporting evidence (images)
-                  </p>
-                </div>
+                {loading ? (
+                  <div className="text-center py-12">
+                    <Loader className="w-8 h-8 mx-auto animate-spin text-purple-600 mb-4" />
+                    <p className="text-lg font-semibold text-slate-800">Loading complaints...</p>
+                  </div>
+                ) : filteredComplaints.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Filter className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+                    <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                      {showGenuineOnly ? 'No Genuine Complaints Found' : 'No Complaints Found'}
+                    </h3>
+                    <p className="text-slate-500 mb-4">
+                      {showGenuineOnly 
+                        ? `No complaints with images found.`
+                        : `No complaints available.`
+                      }
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {filteredComplaints.map((report) => (
+                      <ReportCard key={report.id} report={report} departments={departments} staff={[]} onAssignReport={() => {}} onUpdateReport={() => {}} onUpdatePriority={() => {}} onDeleteReport={() => {}} />
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
