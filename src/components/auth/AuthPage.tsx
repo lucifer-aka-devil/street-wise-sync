@@ -1,14 +1,13 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/hooks/useAuth';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
-import { Loader2, MapPin, Users, AlertTriangle } from 'lucide-react';
-import AdminInfo from '@/components/AdminInfo';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/hooks/useAuth';
+import { AlertTriangle, Loader2, MapPin, Users } from 'lucide-react';
+import { useState } from 'react';
 
 export default function AuthPage() {
   const { signIn, signUp, loading } = useAuth();
@@ -111,7 +110,6 @@ export default function AuthPage() {
 
         {/* Right side - Auth Form */}
         <div className="space-y-6 order-1 lg:order-2">
-          <AdminInfo />
           <Card className="w-full max-w-md mx-auto lg:max-w-lg bg-white/80 backdrop-blur-sm border-0 shadow-xl">
             <CardHeader className="space-y-2 pb-6">
               <CardTitle className="text-2xl font-bold text-center text-slate-800">{t('auth.welcome')}</CardTitle>
