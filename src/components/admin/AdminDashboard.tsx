@@ -15,7 +15,9 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  ComposedChart,
   Legend,
+  Line,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -377,10 +379,40 @@ export default function EnhancedAdminDashboard() {
       satisfaction: data.satisfaction.length > 0 ? Math.round(data.satisfaction.reduce((a, b) => a + b, 0) / data.satisfaction.length * 10) / 10 : 0
     }));
 
+    // Build daily trend data for the last ~30 days
+    const byDay: Record<string, { date: string; count: number; resolved: number; pending: number; cumulative: number }>
+      = {};
+    const sorted = [...filteredReports].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    let cumulative = 0;
+    sorted.forEach(r => {
+      const key = new Date(r.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      if (!byDay[key]) {
+        byDay[key] = { date: key, count: 0, resolved: 0, pending: 0, cumulative };
+      }
+      byDay[key].count += 1;
+      if (r.status === 'resolved') byDay[key].resolved += 1;
+      if (r.status === 'submitted' || r.status === 'in_progress' || r.status === 'acknowledged') byDay[key].pending += 1;
+      cumulative += 1;
+      byDay[key].cumulative = cumulative;
+    });
+
+    const trendSeries = Object.values(byDay);
+
+    // Build 7x24 heatmap counts (Sun..Sat x hours 0..23)
+    const heatmap: number[][] = Array.from({ length: 7 }, () => Array.from({ length: 24 }, () => 0));
+    filteredReports.forEach(r => {
+      const d = new Date(r.created_at);
+      const day = d.getDay(); // 0 Sun .. 6 Sat
+      const hour = d.getHours();
+      heatmap[day][hour] += 1;
+    });
+
     return {
       statusStats,
       categoryStats,
-      departmentStats
+      departmentStats,
+      trendSeries,
+      heatmap
     };
   }, [reports, timeRange, showGenuineOnly]);
 
@@ -495,9 +527,10 @@ export default function EnhancedAdminDashboard() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 h-auto p-1 bg-white/70 backdrop-blur-sm border border-orange-200/30 shadow-sm rounded-xl">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-6 h-auto p-1 bg-white/70 backdrop-blur-sm border border-orange-200/30 shadow-sm rounded-xl">
             {[
               { value: 'overview', label: 'Overview' },
+              { value: 'trends', label: 'Trends' },
               { value: 'complaints', label: 'Complaints' },
               { value: 'workers', label: 'Workers' },
               { value: 'departments', label: 'Departments' },
@@ -512,6 +545,119 @@ export default function EnhancedAdminDashboard() {
               </TabsTrigger>
             ))}
           </TabsList>
+
+          {/* Trends Tab */}
+          <TabsContent value="trends" className="space-y-8">
+            <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base sm:text-lg lg:text-xl font-semibold text-slate-800 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  Advanced Trend Analysis
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={280} className="sm:h-[320px] lg:h-[360px]">
+                  <ComposedChart data={chartData.trendSeries} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#eef2ff" />
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fontSize: 10, fill: '#64748b' }} 
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis yAxisId="left" tick={{ fontSize: 10, fill: '#64748b' }} />
+                    <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: '#64748b' }} />
+                    <Tooltip content={(props: any) => <CustomTooltip {...props} />} />
+                    <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                    <Bar yAxisId="left" dataKey="count" name="Total" fill="#F59E0B" radius={[2,2,0,0]} />
+                    <Bar yAxisId="left" dataKey="resolved" name="Resolved" fill="#10B981" radius={[2,2,0,0]} />
+                    <Line yAxisId="left" type="monotone" dataKey="pending" name="Pending" stroke="#EF4444" strokeWidth={2} dot={false} />
+                    <Line yAxisId="right" type="monotone" dataKey="cumulative" name="Cumulative" stroke="#8B5CF6" strokeWidth={2} dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Category Performance */}
+            <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base sm:text-lg lg:text-xl font-semibold text-slate-800 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  Category Performance
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={280} className="sm:h-[320px] lg:h-[360px]">
+                  <ComposedChart data={chartData.categoryStats} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 10, fill: '#64748b' }} 
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      interval={0}
+                    />
+                    <YAxis yAxisId="left" tick={{ fontSize: 10, fill: '#64748b' }} />
+                    <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: '#64748b' }} />
+                    <Tooltip content={(props: any) => <CustomTooltip {...props} />} />
+                    <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                    <Bar yAxisId="left" dataKey="count" name="Total Reports" fill="#F59E0B" radius={[2,2,0,0]} />
+                    <Bar yAxisId="left" dataKey="resolved" name="Resolved" fill="#10B981" radius={[2,2,0,0]} />
+                    <Line yAxisId="right" type="monotone" dataKey="resolutionRate" name="Resolution Rate %" stroke="#8B5CF6" strokeWidth={2} dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Report Activity Heatmap */}
+            <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base sm:text-lg lg:text-xl font-semibold text-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <span className="flex items-center gap-2"><div className="w-2 h-2 bg-rose-500 rounded-full"></div>Report Activity Heatmap</span>
+                  <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-xs sm:text-sm">Peak Hours Analysis</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <div className="grid gap-0.5 sm:gap-1 min-w-[400px]" style={{ gridTemplateColumns: '30px repeat(24, minmax(8px, 1fr))' }}>
+                    {/* Header row */}
+                    <div></div>
+                    {Array.from({ length: 24 }).map((_, h) => (
+                      <div key={h} className="text-[8px] sm:text-[10px] text-center text-slate-500">{h}</div>
+                    ))}
+                    {/* Day rows */}
+                    {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((day, dIndex) => (
+                      <>
+                        <div key={day} className="text-[9px] sm:text-[11px] text-slate-600 pr-1 sm:pr-2 text-right leading-3 sm:leading-5">{day}</div>
+                        {Array.from({ length: 24 }).map((_, h) => {
+                          const v = chartData.heatmap[dIndex][h] || 0;
+                          const intensity = v === 0 ? 0 : v < 2 ? 1 : v < 4 ? 2 : v < 7 ? 3 : 4;
+                          const colors = ['bg-orange-50','bg-orange-100','bg-orange-200','bg-orange-300','bg-orange-400'];
+                          return (
+                            <div
+                              key={`${day}-${h}`}
+                              className={`h-3 sm:h-4 rounded-sm sm:rounded ${colors[intensity]} transition-colors duration-200`}
+                              title={`${day} ${h}:00 — ${v} reports`}
+                            />
+                          );
+                        })}
+                      </>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-3 text-[10px] sm:text-xs text-slate-600">
+                  <span>Activity Level:</span>
+                  <div className="flex gap-0.5 sm:gap-1 items-center">
+                    {['bg-orange-50','bg-orange-100','bg-orange-200','bg-orange-300','bg-orange-400'].map((c, i) => (
+                      <div key={i} className={`w-3 h-2 sm:w-4 sm:h-3 rounded ${c}`} />
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="overview" className="space-y-8">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">

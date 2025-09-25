@@ -1,35 +1,34 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from '@/hooks/use-toast';
-import { 
-  Plus, 
-  MapPin, 
-  Clock, 
-  ThumbsUp, 
-  Eye, 
-  CheckCircle, 
-  AlertCircle,
-  XCircle,
-  Filter,
-  Map,
-  Search,
-  Settings,
-  BarChart3,
-  ExternalLink,
-  FileText,
-  Hash,
-  User
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import {
+    AlertCircle,
+    BarChart3,
+    CheckCircle,
+    Clock,
+    ExternalLink,
+    Eye,
+    FileText,
+    Filter,
+    Hash,
+    Map,
+    MapPin,
+    Plus,
+    Search,
+    Settings,
+    ThumbsUp,
+    User,
+    XCircle
 } from 'lucide-react';
-import ReportForm from './ReportForm';
+import { useEffect, useState } from 'react';
 import CitizenMapView from './MapView';
-import MyReports from './MyReports';
+import ReportForm from './ReportForm';
 import TrackReport from './TrackReport';
 
 interface Report {
@@ -495,73 +494,73 @@ export default function CitizenDashboard() {
       <div className="flex flex-col lg:flex-row">
         {/* Left Sidebar - Hidden on mobile, shown as bottom nav */}
         <div className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+          <div className="p-4 lg:p-6">
+            <div className="flex items-center gap-3 mb-6 lg:mb-8">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-green-600 rounded-full flex items-center justify-center">
+                <div className="w-4 h-4 lg:w-6 lg:h-6 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 lg:w-3 lg:h-3 bg-green-600 rounded-full"></div>
                 </div>
               </div>
             </div>
             
-            <nav className="space-y-2">
+            <nav className="space-y-1 lg:space-y-2">
               <button
                 onClick={() => setActiveTab('dashboard')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
                   activeTab === 'dashboard' 
                     ? 'bg-gray-100 text-gray-900 font-medium' 
                     : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <BarChart3 className="h-5 w-5" />
+                <BarChart3 className="h-4 w-4 lg:h-5 lg:w-5" />
                 Dashboard
               </button>
               
               <button
                 onClick={() => setActiveTab('map')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
                   activeTab === 'map' 
                     ? 'bg-gray-100 text-gray-900 font-medium' 
                     : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <Map className="h-5 w-5" />
+                <Map className="h-4 w-4 lg:h-5 lg:w-5" />
                 Map View
               </button>
               
               <button
                 onClick={() => setActiveTab('myreports')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
                   activeTab === 'myreports' 
                     ? 'bg-gray-100 text-gray-900 font-medium' 
                     : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <FileText className="h-5 w-5" />
+                <FileText className="h-4 w-4 lg:h-5 lg:w-5" />
                 My Reports
               </button>
               
               <button
                 onClick={() => setActiveTab('track')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
                   activeTab === 'track' 
                     ? 'bg-gray-100 text-gray-900 font-medium' 
                     : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-4 w-4 lg:h-5 lg:w-5" />
                 Track Report
               </button>
               
               <button
                 onClick={() => setActiveTab('settings')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
                   activeTab === 'settings' 
                     ? 'bg-gray-100 text-gray-900 font-medium' 
                     : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <Settings className="h-5 w-5" />
+                <Settings className="h-4 w-4 lg:h-5 lg:w-5" />
                 Settings
               </button>
             </nav>
@@ -569,90 +568,90 @@ export default function CitizenDashboard() {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="lg:hidden bg-white border-b border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+        <div className="lg:hidden bg-white border-b border-gray-200 p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-600 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-600 rounded-full"></div>
                 </div>
               </div>
-              <h1 className="text-lg font-bold text-gray-900">Civic Dashboard</h1>
+              <h1 className="text-base sm:text-lg font-bold text-gray-900">Civic Dashboard</h1>
             </div>
           </div>
           
-          <nav className="flex space-x-1">
+          <nav className="flex space-x-0.5 sm:space-x-1">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeTab === 'dashboard' 
                   ? 'bg-gray-100 text-gray-900 font-medium' 
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              <BarChart3 className="h-4 w-4" />
-              Dashboard
+              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Dashboard</span>
             </button>
             
             <button
               onClick={() => setActiveTab('map')}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeTab === 'map' 
                   ? 'bg-gray-100 text-gray-900 font-medium' 
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              <Map className="h-4 w-4" />
-              Map
+              <Map className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Map</span>
             </button>
             
             <button
               onClick={() => setActiveTab('myreports')}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeTab === 'myreports' 
                   ? 'bg-gray-100 text-gray-900 font-medium' 
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              <FileText className="h-4 w-4" />
-              My Reports
+              <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">My Reports</span>
             </button>
             
             <button
               onClick={() => setActiveTab('track')}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeTab === 'track' 
                   ? 'bg-gray-100 text-gray-900 font-medium' 
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              <Search className="h-4 w-4" />
-              Track
+              <Search className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Track</span>
             </button>
             
             <button
               onClick={() => setActiveTab('settings')}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeTab === 'settings' 
                   ? 'bg-gray-100 text-gray-900 font-medium' 
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              <Settings className="h-4 w-4" />
-              Settings
+              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Settings</span>
             </button>
           </nav>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col lg:flex-row">
-          <div className="flex-1 p-3 sm:p-6">
+          <div className="flex-1 p-2 sm:p-3 lg:p-6">
             {/* Header - Hidden on mobile since it's in mobile nav */}
-            <div className="hidden lg:block mb-6">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <div className="hidden lg:block mb-4 lg:mb-6">
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
                 Civic Issue Dashboard
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm lg:text-base text-gray-600">
                 View and track all reported civic issues in Jharkhand
               </p>
             </div>
@@ -660,25 +659,25 @@ export default function CitizenDashboard() {
             {activeTab === 'dashboard' && (
               <>
                 {/* Search and Filters */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
-                  <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 sm:p-3 lg:p-4 mb-3 sm:mb-4 lg:mb-6">
+                  <div className="flex flex-col gap-2 sm:gap-3 lg:gap-4">
                     <div className="w-full">
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3 sm:h-4 sm:w-4" />
                         <Input
                           placeholder="Search complaints, issues, locations..."
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
-                          className="pl-10 text-sm"
+                          className="pl-8 sm:pl-10 text-xs sm:text-sm"
                         />
                       </div>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Ministry</p>
+                        <p className="text-xs font-medium text-gray-700 mb-1">Ministry</p>
                         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                          <SelectTrigger className="text-sm">
+                          <SelectTrigger className="text-xs sm:text-sm h-8 sm:h-10">
                             <SelectValue placeholder="All" />
                           </SelectTrigger>
                           <SelectContent>
@@ -693,9 +692,9 @@ export default function CitizenDashboard() {
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</p>
+                        <p className="text-xs font-medium text-gray-700 mb-1">Status</p>
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
-                          <SelectTrigger className="text-sm">
+                          <SelectTrigger className="text-xs sm:text-sm h-8 sm:h-10">
                             <SelectValue placeholder="All" />
                           </SelectTrigger>
                           <SelectContent>
@@ -710,9 +709,9 @@ export default function CitizenDashboard() {
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-1">Priority</p>
+                        <p className="text-xs font-medium text-gray-700 mb-1">Priority</p>
                         <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                          <SelectTrigger className="text-sm">
+                          <SelectTrigger className="text-xs sm:text-sm h-8 sm:h-10">
                             <SelectValue placeholder="All" />
                           </SelectTrigger>
                           <SelectContent>
@@ -726,7 +725,7 @@ export default function CitizenDashboard() {
                       </div>
                       
                       <div className="flex items-end">
-                        <div className="bg-blue-600 text-white px-3 py-2 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap">
+                        <div className="bg-blue-600 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs font-medium whitespace-nowrap">
                           {filteredReports.length} Total
                         </div>
                       </div>
@@ -735,19 +734,19 @@ export default function CitizenDashboard() {
                 </div>
 
                 {/* Reports List */}
-                <div className="space-y-4">
+                <div className="space-y-2 sm:space-y-4">
                   {loading ? (
-                    <div className="flex items-center justify-center py-16">
+                    <div className="flex items-center justify-center py-12 sm:py-16">
                       <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                        <p className="text-slate-700 font-medium">{t('citizen.loading')}</p>
+                        <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-orange-500 mx-auto mb-3 sm:mb-4"></div>
+                        <p className="text-sm sm:text-base text-slate-700 font-medium">{t('citizen.loading')}</p>
                       </div>
                     </div>
                   ) : filteredReports.length === 0 ? (
-                    <div className="text-center py-16">
-                      <Filter className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                      <p className="text-lg font-semibold text-gray-700 mb-2">No reports found</p>
-                      <p className="text-gray-600">Try adjusting your search or filters</p>
+                    <div className="text-center py-12 sm:py-16">
+                      <Filter className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                      <p className="text-base sm:text-lg font-semibold text-gray-700 mb-2">No reports found</p>
+                      <p className="text-sm sm:text-base text-gray-600">Try adjusting your search or filters</p>
                     </div>
                   ) : (
                     filteredReports.map((report) => (
@@ -759,7 +758,7 @@ export default function CitizenDashboard() {
             )}
 
             {activeTab === 'map' && (
-              <div className="h-[calc(100vh-200px)]">
+              <div className="h-[calc(100vh-150px)] sm:h-[calc(100vh-200px)]">
                 <CitizenMapView />
               </div>
             )}
@@ -767,24 +766,24 @@ export default function CitizenDashboard() {
             {activeTab === 'myreports' && (
               <>
                 {!user ? (
-                  <div className="text-center py-16">
-                    <User className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                    <p className="text-lg font-semibold text-gray-700 mb-2">{t('citizen.signInToView')}</p>
-                    <p className="text-gray-600">Please sign in to view your reports</p>
+                  <div className="text-center py-12 sm:py-16">
+                    <User className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                    <p className="text-base sm:text-lg font-semibold text-gray-700 mb-2">{t('citizen.signInToView')}</p>
+                    <p className="text-sm sm:text-base text-gray-600">Please sign in to view your reports</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-2 sm:space-y-4">
                     {myReports.length === 0 ? (
-                      <div className="text-center py-16">
-                        <Plus className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                        <p className="text-lg font-semibold text-gray-700 mb-2">{t('citizen.noMyReports')}</p>
-                        <p className="text-gray-600 mb-8">{t('citizen.noMyReportsDesc')}</p>
+                      <div className="text-center py-12 sm:py-16">
+                        <Plus className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                        <p className="text-base sm:text-lg font-semibold text-gray-700 mb-2">{t('citizen.noMyReports')}</p>
+                        <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">{t('citizen.noMyReportsDesc')}</p>
                         <Button 
                           onClick={() => setShowReportForm(true)}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          size="lg"
+                          className="bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
+                          size="sm"
                         >
-                          <Plus className="mr-2 h-5 w-5" />
+                          <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                           {t('citizen.submitFirst')}
                         </Button>
                       </div>
@@ -803,66 +802,66 @@ export default function CitizenDashboard() {
             )}
 
             {activeTab === 'settings' && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings</h2>
-                <p className="text-gray-600">Settings panel coming soon...</p>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 lg:p-6">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Settings</h2>
+                <p className="text-sm sm:text-base text-gray-600">Settings panel coming soon...</p>
               </div>
             )}
           </div>
 
           {/* Right Sidebar - Hidden on mobile */}
-          <div className="hidden lg:block w-80 bg-white border-l border-gray-200 p-6">
+          <div className="hidden lg:block w-80 bg-white border-l border-gray-200 p-4 lg:p-6">
             {/* Call to Action */}
-            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg p-6 text-white mb-6">
-              <h3 className="text-lg font-bold mb-2">
+            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg p-4 lg:p-6 text-white mb-4 lg:mb-6">
+              <h3 className="text-base lg:text-lg font-bold mb-2">
                 Help Build a Better Jharkhand
               </h3>
-              <p className="text-sm mb-4 opacity-90">
+              <p className="text-xs lg:text-sm mb-3 lg:mb-4 opacity-90">
                 Report civic issues and track their resolution in real-time.
               </p>
               <Button 
                 onClick={() => setShowReportForm(true)}
-                className="w-full bg-white text-orange-600 hover:bg-gray-50 font-semibold"
+                className="w-full bg-white text-orange-600 hover:bg-gray-50 font-semibold text-sm lg:text-base"
               >
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-3 w-3 lg:h-4 lg:w-4" />
                 REPORT ISSUE
               </Button>
             </div>
 
             {/* Legal & Information */}
             <div>
-              <h4 className="text-sm font-semibold text-orange-600 mb-3">
+              <h4 className="text-xs lg:text-sm font-semibold text-orange-600 mb-2 lg:mb-3">
                 Legal & Information
               </h4>
-              <div className="space-y-2">
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+              <div className="space-y-1 lg:space-y-2">
+                <a href="#" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm text-gray-600 hover:text-orange-600">
                   Terms of Service
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-2 w-2 lg:h-3 lg:w-3" />
                 </a>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+                <a href="#" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm text-gray-600 hover:text-orange-600">
                   Privacy Policy
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-2 w-2 lg:h-3 lg:w-3" />
                 </a>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+                <a href="#" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm text-gray-600 hover:text-orange-600">
                   Accessibility
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-2 w-2 lg:h-3 lg:w-3" />
                 </a>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-600">
+                <a href="#" className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm text-gray-600 hover:text-orange-600">
                   RTI Portal
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-2 w-2 lg:h-3 lg:w-3" />
                 </a>
               </div>
             </div>
           </div>
           
           {/* Mobile Floating Action Button */}
-          <div className="lg:hidden fixed bottom-6 right-6 z-50">
+          <div className="lg:hidden fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
             <Button 
               onClick={() => setShowReportForm(true)}
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-200"
               size="icon"
             >
-              <Plus className="h-6 w-6" />
+              <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
           </div>
         </div>
