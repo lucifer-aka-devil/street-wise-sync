@@ -42,6 +42,7 @@ interface DepartmentData {
 
 interface Worker {
   id: string;
+  user_id: string;
   full_name: string;
   email: string;
   phone?: string;
@@ -56,6 +57,43 @@ interface Department {
   name: string;
   is_active: boolean;
 }
+
+// Static demo workers to showcase management and assignment features
+const STATIC_WORKERS: Worker[] = [
+  {
+    id: 'static-1',
+    user_id: 'static-1',
+    full_name: 'Aarav Kumar',
+    email: 'aarav.kumar@civic.gov.in',
+    phone: '999-111-2222',
+    department_id: '',
+    department_name: 'Sanitation',
+    role: 'staff',
+    created_at: '2025-01-01T00:00:00Z',
+  },
+  {
+    id: 'static-2',
+    user_id: 'static-2',
+    full_name: 'Neha Sharma',
+    email: 'neha.sharma@civic.gov.in',
+    phone: '999-333-4444',
+    department_id: '',
+    department_name: 'Public Works',
+    role: 'staff',
+    created_at: '2025-01-01T00:00:00Z',
+  },
+  {
+    id: 'static-3',
+    user_id: 'static-3',
+    full_name: 'Rohan Verma',
+    email: 'rohan.verma@civic.gov.in',
+    phone: '999-555-6666',
+    department_id: '',
+    department_name: 'Parks & Recreation',
+    role: 'staff',
+    created_at: '2025-01-01T00:00:00Z',
+  },
+];
 
 export default function EnhancedAdminDashboard() {
   const [reports, setReports] = useState([]);
@@ -150,13 +188,23 @@ export default function EnhancedAdminDashboard() {
         .select('user_id, full_name, email');
 
       // Combine the data
-      const enrichedReports = (reportsData || []).map(report => ({
-        ...report,
-        categories: categoriesData?.find(cat => cat.id === report.category_id) || null,
-        departments: departmentsData?.find(dept => dept.id === report.department_id) || null,
-        profiles: profilesData?.find(profile => profile.user_id === report.user_id) || null,
-        assigned_user: profilesData?.find(profile => profile.user_id === report.assigned_to) || null
-      }));
+const enrichedReports = (reportsData || []).map(report => {
+        const category = categoriesData?.find(cat => cat.id === report.category_id) || null;
+        const department = departmentsData?.find(dept => dept.id === report.department_id) || null;
+        const profile = profilesData?.find(profile => profile.user_id === report.user_id) || null;
+        const assignedProfile = profilesData?.find(profile => profile.user_id === report.assigned_to) || null;
+        const assignedStatic = !assignedProfile
+          ? STATIC_WORKERS.find(w => w.user_id === report.assigned_to)
+          : null;
+
+        return {
+          ...report,
+          categories: category,
+          departments: department,
+          profiles: profile,
+          assigned_user: assignedProfile || (assignedStatic ? { full_name: assignedStatic.full_name } : null)
+        };
+      });
 
       setReports(enrichedReports);
     } catch (error) {
@@ -194,7 +242,8 @@ export default function EnhancedAdminDashboard() {
         department_name: worker.departments?.name || 'No department'
       }));
 
-      setWorkers(workersWithDept);
+const combinedWorkers = [...STATIC_WORKERS, ...workersWithDept];
+      setWorkers(combinedWorkers);
     } catch (error) {
       console.error('Error fetching workers:', error);
     }
@@ -281,7 +330,15 @@ export default function EnhancedAdminDashboard() {
   };
 
   // Delete worker
-  const handleDeleteWorker = async (workerId: string) => {
+const handleDeleteWorker = async (workerId: string) => {
+    // Prevent deleting static demo workers
+    if (workerId.startsWith('static-')) {
+      toast({
+        title: "Demo Worker",
+        description: "Static demo workers cannot be deleted.",
+      });
+      return;
+    }
     try {
       const { error } = await supabase
         .from('profiles')
@@ -990,7 +1047,7 @@ export default function EnhancedAdminDashboard() {
                         key={report.id} 
                         report={report} 
                         departments={departments} 
-                        staff={workers.map(w => ({ user_id: w.id, full_name: w.full_name }))} 
+staff={workers.map((w: any) => ({ user_id: w.user_id || w.id, full_name: w.full_name }))} 
                         onAssignReport={assignReport} 
                         onUpdateReport={updateReportStatus} 
                         onUpdatePriority={updateReportPriority} 
