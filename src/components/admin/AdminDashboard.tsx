@@ -78,6 +78,7 @@ export default function EnhancedAdminDashboard() {
     department_id: '',
     phone: ''
   });
+  const [operationLoading, setOperationLoading] = useState<string | null>(null);
 
   // Load data on component mount
   useEffect(() => {
@@ -91,6 +92,27 @@ export default function EnhancedAdminDashboard() {
         { event: '*', schema: 'public', table: 'reports' },
         () => fetchReports()
       )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => {
+          fetchWorkers();
+          fetchReports(); // Refresh reports to update assigned user info
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'departments' },
+        () => {
+          fetchDepartments();
+          fetchReports(); // Refresh reports to update department info
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'report_updates' },
+        () => fetchReports() // Refresh reports when status updates are added
+      )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
@@ -100,12 +122,43 @@ export default function EnhancedAdminDashboard() {
   const fetchReports = async () => {
     setLoading(true);
     try {
+      // First get all reports
       const { data: reportsData, error: reportsError } = await supabase
         .from('reports')
         .select('*')
         .order('created_at', { ascending: false });
-      if (reportsError) throw reportsError;
-      setReports(reportsData || []);
+
+      if (reportsError) {
+        console.error('Error fetching reports:', reportsError);
+        setLoading(false);
+        return;
+      }
+
+      // Get categories
+      const { data: categoriesData } = await supabase
+        .from('categories')
+        .select('id, name, color');
+
+      // Get departments  
+      const { data: departmentsData } = await supabase
+        .from('departments')
+        .select('id, name');
+
+      // Get profiles
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, email');
+
+      // Combine the data
+      const enrichedReports = (reportsData || []).map(report => ({
+        ...report,
+        categories: categoriesData?.find(cat => cat.id === report.category_id) || null,
+        departments: departmentsData?.find(dept => dept.id === report.department_id) || null,
+        profiles: profilesData?.find(profile => profile.user_id === report.user_id) || null,
+        assigned_user: profilesData?.find(profile => profile.user_id === report.assigned_to) || null
+      }));
+
+      setReports(enrichedReports);
     } catch (error) {
       console.error('Error fetching reports:', error);
     } finally {
@@ -261,6 +314,169 @@ export default function EnhancedAdminDashboard() {
         ? "New complaints will not be automatically assigned" 
         : "New complaints will be automatically assigned to available workers",
     });
+  };
+
+  // CRUD Operations for Reports
+  const assignReport = async (reportId: string, departmentId: string) => {
+    setOperationLoading(`assign-${reportId}`);
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .update({ department_id: departmentId })
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Report Assigned",
+        description: "The report has been assigned to the department.",
+      });
+
+      // Refresh data to show real-time updates
+      fetchReports();
+    } catch (error: any) {
+      console.error('Error assigning report:', error);
+      toast({
+        title: "Assignment Error",
+        description: error.message || "There was an error assigning the report. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setOperationLoading(null);
+    }
+  };
+
+  const updateReportStatus = async (reportId: string, status: string, assignedTo?: string, message?: string) => {
+    setOperationLoading(`update-${reportId}`);
+    try {
+      const updateData: any = { 
+        status,
+        resolved_at: status === 'resolved' ? new Date().toISOString() : null
+      };
+      
+      if (assignedTo) {
+        updateData.assigned_to = assignedTo;
+      }
+
+      const { error } = await supabase
+        .from('reports')
+        .update(updateData)
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      // Add status update record
+      if (message?.trim()) {
+        await supabase
+          .from('report_updates')
+          .insert({
+            report_id: reportId,
+            user_id: 'admin', // You might want to get the actual admin user ID
+            status,
+            message: message.trim(),
+          });
+      }
+
+      toast({
+        title: "Report Updated",
+        description: "The report status has been updated successfully.",
+      });
+
+      // Refresh data to show real-time updates
+      fetchReports();
+    } catch (error: any) {
+      console.error('Error updating report:', error);
+      toast({
+        title: "Update Error",
+        description: error.message || "There was an error updating the report. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setOperationLoading(null);
+    }
+  };
+
+  const updateReportPriority = async (reportId: string, priority: string) => {
+    setOperationLoading(`priority-${reportId}`);
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .update({ priority })
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Priority Updated",
+        description: "The report priority has been updated successfully.",
+      });
+
+      // Refresh data to show real-time updates
+      fetchReports();
+    } catch (error: any) {
+      console.error('Error updating priority:', error);
+      toast({
+        title: "Update Error",
+        description: error.message || "There was an error updating the priority. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setOperationLoading(null);
+    }
+  };
+
+  const deleteReport = async (reportId: string) => {
+    // Add confirmation dialog
+    if (!confirm('Are you sure you want to delete this report? This action cannot be undone and will permanently remove the report and all related data.')) {
+      return;
+    }
+
+    setOperationLoading(`delete-${reportId}`);
+    try {
+      // First delete related data to ensure complete cleanup
+      const { error: votesError } = await supabase
+        .from('report_votes')
+        .delete()
+        .eq('report_id', reportId);
+
+      if (votesError) {
+        console.warn('Error deleting report votes:', votesError);
+      }
+
+      const { error: updatesError } = await supabase
+        .from('report_updates')
+        .delete()
+        .eq('report_id', reportId);
+
+      if (updatesError) {
+        console.warn('Error deleting report updates:', updatesError);
+      }
+
+      // Finally delete the report itself
+      const { error } = await supabase
+        .from('reports')
+        .delete()
+        .eq('id', reportId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Report Deleted",
+        description: "The report and all related data have been permanently deleted.",
+      });
+
+      // Refresh data to show real-time updates
+      fetchReports();
+    } catch (error: any) {
+      console.error('Error deleting report:', error);
+      toast({
+        title: "Delete Error",
+        description: error.message || "There was an error deleting the report. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setOperationLoading(null);
+    }
   };
 
   // Enhanced statistics with detailed calculations
@@ -770,7 +986,16 @@ export default function EnhancedAdminDashboard() {
                 ) : (
                   <div className="grid gap-4">
                     {filteredComplaints.map((report) => (
-                      <ReportCard key={report.id} report={report} departments={departments} staff={[]} onAssignReport={async (_reportId: string, _departmentId: string) => {}} onUpdateReport={async (_reportId: string, _status: string, _assignedTo?: string, _message?: string) => {}} onUpdatePriority={async (_reportId: string, _priority: string) => {}} onDeleteReport={async (_reportId: string) => {}} />
+                      <ReportCard 
+                        key={report.id} 
+                        report={report} 
+                        departments={departments} 
+                        staff={workers.map(w => ({ user_id: w.id, full_name: w.full_name }))} 
+                        onAssignReport={assignReport} 
+                        onUpdateReport={updateReportStatus} 
+                        onUpdatePriority={updateReportPriority} 
+                        onDeleteReport={deleteReport} 
+                      />
                     ))}
                   </div>
                 )}
