@@ -652,7 +652,7 @@ export default function CitizenDashboard() {
                 Civic Issue Dashboard
               </h1>
               <p className="text-sm lg:text-base text-gray-600">
-                View and track all reported civic issues in Jharkhand
+                View and track all reported civic issues
               </p>
             </div>
 
@@ -814,7 +814,7 @@ export default function CitizenDashboard() {
             {/* Call to Action */}
             <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg p-4 lg:p-6 text-white mb-4 lg:mb-6">
               <h3 className="text-base lg:text-lg font-bold mb-2">
-                Help Build a Better Jharkhand
+                Help Build Better Infrastructure
               </h3>
               <p className="text-xs lg:text-sm mb-3 lg:mb-4 opacity-90">
                 Report civic issues and track their resolution in real-time.

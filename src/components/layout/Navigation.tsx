@@ -29,12 +29,12 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
             <div className="flex items-center min-w-0">
               <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  JH
+                  JS
                 </div>
                 <div className="min-w-0">
                   <h1 className="text-base sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent truncate">
-                    <span className="hidden sm:inline">Government of Jharkhand</span>
-                    <span className="sm:hidden">Jharkhand Gov</span>
+                    <span className="hidden sm:inline">Ministry of Jal Shakti</span>
+                    <span className="sm:hidden">Jal Shakti</span>
                   </h1>
                   <p className="text-xs sm:text-sm text-body hidden sm:block font-medium">{t('nav.portal')}</p>
                 </div>

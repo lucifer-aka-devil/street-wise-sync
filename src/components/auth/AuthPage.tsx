@@ -55,7 +55,7 @@ export default function AuthPage() {
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg overflow-hidden">
                 <img
                   src="/logo.png"
-                  alt="Jharkhand Government Logo"
+                  alt="Ministry of Jal Shakti Logo"
                   className="w-full h-full object-contain p-2"
                 />
               </div>
