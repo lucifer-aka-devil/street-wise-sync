@@ -61,7 +61,7 @@ export default function AuthPage() {
               </div>
               <div className="text-left">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
-                  Government of Jharkhand
+                  Ministry of Jal Shakti
                 </h1>
                 <p className="text-lg sm:text-xl text-slate-600 font-medium">Civic Reporting Portal</p>
               </div>
