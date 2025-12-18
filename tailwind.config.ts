@@ -57,12 +57,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        civic: {
-          blue: "hsl(var(--civic-blue))",
-          green: "hsl(var(--civic-green))",
-          red: "hsl(var(--civic-red))",
-          yellow: "hsl(var(--civic-yellow))",
-          gray: "hsl(var(--civic-gray))",
+        // Heritage color palette
+        heritage: {
+          terracotta: "hsl(var(--heritage-terracotta))",
+          gold: "hsl(var(--heritage-gold))",
+          bronze: "hsl(var(--heritage-bronze))",
+          cream: "hsl(var(--heritage-cream))",
+          brown: "hsl(var(--heritage-brown))",
+          maroon: "hsl(var(--heritage-maroon))",
+          olive: "hsl(var(--heritage-olive))",
+          sandstone: "hsl(var(--heritage-sandstone))",
         },
         status: {
           submitted: "hsl(var(--status-submitted))",
@@ -103,6 +107,19 @@ export default {
           '"Helvetica Neue"',
           "Arial",
           "sans-serif",
+        ],
+        serif: [
+          "Playfair Display",
+          "Georgia",
+          "Cambria",
+          '"Times New Roman"',
+          "Times",
+          "serif",
+        ],
+        heritage: [
+          "Playfair Display",
+          "Georgia",
+          "serif",
         ],
       },
       fontSize: {
@@ -249,7 +266,8 @@ export default {
         medium: "var(--shadow-medium)",
         large: "var(--shadow-large)",
         glow: "var(--shadow-glow)",
-        "glow-green": "var(--shadow-glow-green)",
+        "glow-gold": "var(--shadow-glow-gold)",
+        "glow-heritage": "var(--shadow-glow-heritage)",
       },
       screens: {
         xs: "475px",
