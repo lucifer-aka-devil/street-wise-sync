@@ -2,96 +2,102 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Heritage-Themed Design System - All colors MUST be HSL */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Heritage color palette - warm earthy tones */
+    --background: 35 30% 97%;
+    --foreground: 25 30% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 35 25% 98%;
+    --card-foreground: 25 30% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 35 25% 98%;
+    --popover-foreground: 25 30% 12%;
 
-    --primary: 24 95% 53%;
-    --primary-foreground: 210 40% 98%;
+    /* Terracotta primary - warm heritage feel */
+    --primary: 18 70% 45%;
+    --primary-foreground: 35 30% 97%;
 
-    --secondary: 33 100% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm sand secondary */
+    --secondary: 35 35% 92%;
+    --secondary-foreground: 25 30% 15%;
 
-    --muted: 33 100% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted earthy tones */
+    --muted: 35 25% 90%;
+    --muted-foreground: 25 15% 45%;
 
-    --accent: 142 76% 36%;
-    --accent-foreground: 355 7% 97%;
+    /* Deep gold accent */
+    --accent: 43 80% 45%;
+    --accent-foreground: 25 30% 12%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 35 30% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 24 95% 53%;
+    --border: 35 25% 85%;
+    --input: 35 25% 88%;
+    --ring: 18 70% 45%;
 
     --radius: 0.5rem;
 
-    /* Civic-specific colors - Prince's orange/amber theme */
-    --civic-orange: 24 95% 53%;
-    --civic-green: 142 76% 36%;
-    --civic-red: 0 84% 60%;
-    --civic-yellow: 43 89% 38%;
-    --civic-gray: 215 16% 47%;
+    /* Heritage-specific colors */
+    --heritage-terracotta: 18 70% 45%;
+    --heritage-gold: 43 80% 45%;
+    --heritage-bronze: 30 60% 35%;
+    --heritage-cream: 35 35% 92%;
+    --heritage-brown: 25 50% 25%;
+    --heritage-maroon: 350 60% 30%;
+    --heritage-olive: 85 30% 35%;
+    --heritage-sandstone: 35 40% 75%;
     
-    /* Status colors - Prince's theme */
-    --status-submitted: 24 95% 53%;
-    --status-acknowledged: 43 89% 38%;
-    --status-in-progress: 33 95% 50%;
-    --status-resolved: 120 61% 50%;
-    --status-rejected: 0 84% 60%;
+    /* Status colors - heritage tones */
+    --status-submitted: 18 70% 45%;
+    --status-acknowledged: 43 80% 45%;
+    --status-in-progress: 30 60% 50%;
+    --status-resolved: 85 45% 40%;
+    --status-rejected: 0 65% 50%;
     
-    /* Priority colors - Prince's theme */
-    --priority-low: 215 16% 47%;
-    --priority-medium: 43 89% 38%;
-    --priority-high: 24 95% 53%;
-    --priority-urgent: 0 84% 60%;
+    /* Priority colors - heritage tones */
+    --priority-low: 25 15% 50%;
+    --priority-medium: 43 80% 45%;
+    --priority-high: 18 70% 45%;
+    --priority-urgent: 350 60% 40%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 24 95% 53%;
+    --sidebar-background: 35 25% 96%;
+    --sidebar-foreground: 25 30% 20%;
+    --sidebar-primary: 18 70% 45%;
+    --sidebar-primary-foreground: 35 30% 97%;
+    --sidebar-accent: 35 35% 90%;
+    --sidebar-accent-foreground: 25 30% 15%;
+    --sidebar-border: 35 25% 85%;
+    --sidebar-ring: 18 70% 45%;
 
-    /* Enhanced gradients for modern look - from main with orange theme integration */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--civic-orange)), hsl(33 95% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--civic-green)), hsl(142 80% 42%));
-    --gradient-accent: linear-gradient(135deg, hsl(210 40% 96%), hsl(220 20% 90%));
-    --gradient-success: linear-gradient(135deg, hsl(120 61% 50%), hsl(142 76% 36%));
-    --gradient-warning: linear-gradient(135deg, hsl(43 89% 38%), hsl(35 95% 50%));
-    --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(10 90% 65%));
-    --gradient-orange: linear-gradient(135deg, hsl(24 95% 53%), hsl(33 95% 50%));
-    --gradient-amber: linear-gradient(135deg, hsl(43 89% 38%), hsl(35 95% 50%));
+    /* Heritage gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(18 70% 45%), hsl(30 60% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(43 80% 45%), hsl(35 70% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(35 35% 92%), hsl(35 30% 85%));
+    --gradient-success: linear-gradient(135deg, hsl(85 45% 40%), hsl(85 50% 50%));
+    --gradient-warning: linear-gradient(135deg, hsl(43 80% 45%), hsl(35 70% 50%));
+    --gradient-danger: linear-gradient(135deg, hsl(350 60% 40%), hsl(0 65% 50%));
+    --gradient-heritage: linear-gradient(135deg, hsl(18 70% 45%), hsl(43 80% 45%));
+    --gradient-gold: linear-gradient(135deg, hsl(43 80% 45%), hsl(35 70% 55%));
+    --gradient-sandstone: linear-gradient(180deg, hsl(35 40% 85%), hsl(35 35% 75%));
     
-    /* Glass morphism effects - from main */
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --glass-backdrop: blur(10px);
+    /* Glass morphism effects - heritage style */
+    --glass-bg: rgba(255, 248, 240, 0.85);
+    --glass-border: rgba(180, 140, 100, 0.25);
+    --glass-backdrop: blur(12px);
     
-    /* Enhanced shadows - from main with orange glow addition */
-    --shadow-soft: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
-    --shadow-medium: 0 4px 16px -4px rgba(0, 0, 0, 0.15);
-    --shadow-large: 0 8px 32px -8px rgba(0, 0, 0, 0.2);
-    --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
-    --shadow-glow-green: 0 0 20px rgba(34, 197, 94, 0.15);
-    --shadow-glow-orange: 0 0 20px rgba(251, 146, 60, 0.15);
-    --shadow-glow-amber: 0 0 20px rgba(245, 158, 11, 0.15);
+    /* Heritage shadows - warm tones */
+    --shadow-soft: 0 2px 8px -2px rgba(100, 70, 40, 0.12);
+    --shadow-medium: 0 4px 16px -4px rgba(100, 70, 40, 0.18);
+    --shadow-large: 0 8px 32px -8px rgba(100, 70, 40, 0.25);
+    --shadow-glow: 0 0 20px rgba(180, 100, 50, 0.2);
+    --shadow-glow-gold: 0 0 25px rgba(200, 150, 50, 0.25);
+    --shadow-glow-heritage: 0 0 30px rgba(180, 100, 50, 0.15);
     
-    /* Professional spacing - from main */
+    /* Professional spacing */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
     --space-md: 1rem;
@@ -99,7 +105,7 @@ All colors MUST be HSL.
     --space-xl: 2rem;
     --space-2xl: 3rem;
     
-    /* Enhanced border radius - from main */
+    /* Enhanced border radius */
     --radius-xs: 0.25rem;
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
@@ -109,41 +115,42 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 25 30% 8%;
+    --foreground: 35 30% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 25 25% 12%;
+    --card-foreground: 35 30% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 25 25% 12%;
+    --popover-foreground: 35 30% 95%;
 
-    --primary: 24 95% 53%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 18 70% 50%;
+    --primary-foreground: 25 30% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 25 25% 18%;
+    --secondary-foreground: 35 30% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 25 25% 18%;
+    --muted-foreground: 35 20% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 43 75% 50%;
+    --accent-foreground: 25 30% 10%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 35 30% 95%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 24 95% 53%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 24 95% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 24 95% 53%;
+    --border: 25 25% 20%;
+    --input: 25 25% 20%;
+    --ring: 18 70% 50%;
+    
+    --sidebar-background: 25 30% 10%;
+    --sidebar-foreground: 35 25% 90%;
+    --sidebar-primary: 18 70% 50%;
+    --sidebar-primary-foreground: 35 30% 97%;
+    --sidebar-accent: 25 25% 18%;
+    --sidebar-accent-foreground: 35 25% 90%;
+    --sidebar-border: 25 25% 20%;
+    --sidebar-ring: 18 70% 50%;
   }
 }
 
@@ -153,7 +160,8 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Playfair Display', 'Georgia', serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
@@ -162,64 +170,138 @@ All colors MUST be HSL.
     scroll-behavior: smooth;
   }
   
-  /* Enhanced focus styles */
+  /* Enhanced focus styles - heritage gold ring */
   *:focus-visible {
     @apply ring-2 ring-ring ring-offset-2 ring-offset-background outline-none;
   }
 }
 
 @layer components {
-  /* Glass morphism components - from main */
+  /* Heritage glass morphism */
   .glass {
     background: var(--glass-bg);
     backdrop-filter: var(--glass-backdrop);
     border: 1px solid var(--glass-border);
   }
   
-  /* Professional card styles - from main */
+  /* Heritage card styles */
   .card-elevated {
-    @apply bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply bg-card/95 backdrop-blur-sm border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300;
+    background: linear-gradient(145deg, hsl(35 30% 98%), hsl(35 25% 95%));
   }
   
   .card-interactive {
     @apply card-elevated hover:scale-[1.02] cursor-pointer;
   }
   
-  /* Enhanced button styles - adapted for orange theme */
+  /* Heritage card with ornate border */
+  .card-heritage {
+    @apply relative bg-card border-2 border-primary/20 shadow-xl;
+    background: linear-gradient(180deg, hsl(35 30% 98%), hsl(35 25% 94%));
+  }
+  
+  .card-heritage::before {
+    content: '';
+    @apply absolute inset-0 pointer-events-none;
+    border: 4px solid transparent;
+    border-image: linear-gradient(135deg, hsl(43 80% 45%), hsl(18 70% 45%), hsl(43 80% 45%)) 1;
+    opacity: 0.3;
+  }
+  
+  /* Heritage button styles */
   .btn-primary {
-    @apply bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-200;
+    @apply bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200;
+    font-family: 'Playfair Display', serif;
   }
   
   .btn-secondary {
-    @apply bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 text-slate-700 shadow-sm hover:shadow-md transition-all duration-200;
+    @apply bg-gradient-to-r from-secondary to-muted hover:from-secondary/80 hover:to-muted/80 text-secondary-foreground shadow-sm hover:shadow-md transition-all duration-200;
   }
   
   .btn-success {
-    @apply bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200;
+    @apply bg-gradient-to-r from-[hsl(85_45%_40%)] to-[hsl(85_50%_50%)] hover:from-[hsl(85_45%_35%)] hover:to-[hsl(85_50%_45%)] text-white shadow-lg hover:shadow-xl transition-all duration-200;
   }
   
-  .btn-orange {
-    @apply bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-200;
+  .btn-heritage {
+    @apply bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 0.5px;
   }
   
-  /* Professional text styles - from main */
+  /* Heritage text styles */
   .text-heading {
-    @apply font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent;
+    @apply font-bold;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, hsl(25 50% 25%), hsl(18 70% 45%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-heading-heritage {
+    @apply font-bold;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, hsl(18 70% 45%), hsl(43 80% 45%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
   .text-heading-orange {
-    @apply font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent;
+    @apply font-bold;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, hsl(18 70% 45%), hsl(30 60% 50%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
   .text-subheading {
-    @apply font-semibold text-slate-700;
+    @apply font-semibold text-foreground/80;
+    font-family: 'Playfair Display', serif;
   }
   
   .text-body {
-    @apply text-slate-600 leading-relaxed;
+    @apply text-muted-foreground leading-relaxed;
+    font-family: 'Inter', 'Georgia', sans-serif;
   }
   
-  /* Animation utilities - from main */
+  /* Heritage ornamental divider */
+  .heritage-divider {
+    @apply relative flex items-center justify-center my-6;
+  }
+  
+  .heritage-divider::before,
+  .heritage-divider::after {
+    content: '';
+    @apply flex-1 h-px;
+    background: linear-gradient(90deg, transparent, hsl(43 80% 45%), transparent);
+  }
+  
+  .heritage-divider-icon {
+    @apply mx-4 text-accent;
+  }
+  
+  /* Heritage pattern background */
+  .heritage-pattern {
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(43 80% 45% / 0.05) 2%, transparent 2%),
+      radial-gradient(circle at 75% 75%, hsl(18 70% 45% / 0.05) 2%, transparent 2%);
+    background-size: 40px 40px;
+  }
+  
+  /* Heritage border ornaments */
+  .heritage-border {
+    @apply relative;
+    border: 2px solid hsl(43 80% 45% / 0.3);
+  }
+  
+  .heritage-border::before {
+    content: '◆';
+    @apply absolute -top-3 left-1/2 -translate-x-1/2 bg-background px-2 text-accent text-sm;
+  }
+  
+  /* Animation utilities */
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out;
   }
@@ -232,12 +314,16 @@ All colors MUST be HSL.
     animation: scaleIn 0.3s ease-out;
   }
   
-  /* Professional spacing utilities - from main */
+  .animate-shimmer-gold {
+    animation: shimmerGold 3s ease-in-out infinite;
+  }
+  
+  /* Professional spacing utilities */
   .container-responsive {
     @apply container mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  /* Professional layout grids - from main */
+  /* Professional layout grids */
   .grid-responsive {
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6;
   }
@@ -246,7 +332,7 @@ All colors MUST be HSL.
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6;
   }
   
-  /* Mobile-first responsive text - from main */
+  /* Mobile-first responsive text */
   .text-responsive-lg {
     @apply text-2xl sm:text-3xl lg:text-4xl;
   }
@@ -261,7 +347,7 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  /* Custom animations - from main */
+  /* Custom animations */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -304,18 +390,27 @@ All colors MUST be HSL.
     }
   }
   
-  /* Loading skeleton - from main */
+  @keyframes shimmerGold {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  /* Loading skeleton - heritage style */
   .skeleton {
-    @apply animate-pulse bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 bg-[length:200px_100%] bg-no-repeat;
+    @apply animate-pulse bg-gradient-to-r from-secondary via-muted to-secondary bg-[length:200px_100%] bg-no-repeat;
     animation: shimmer 1.5s ease-in-out infinite;
   }
   
-  /* Mobile touch targets - from main */
+  /* Mobile touch targets */
   .touch-target {
     @apply min-h-[44px] min-w-[44px];
   }
   
-  /* Professional shadows - enhanced with orange glows */
+  /* Heritage shadows */
   .shadow-soft {
     box-shadow: var(--shadow-soft);
   }
@@ -332,15 +427,24 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-glow);
   }
   
-  .shadow-glow-green {
-    box-shadow: var(--shadow-glow-green);
+  .shadow-glow-gold {
+    box-shadow: var(--shadow-glow-gold);
   }
   
-  .shadow-glow-orange {
-    box-shadow: var(--shadow-glow-orange);
+  .shadow-glow-heritage {
+    box-shadow: var(--shadow-glow-heritage);
   }
   
-  .shadow-glow-amber {
-    box-shadow: var(--shadow-glow-amber);
+  /* Heritage texture overlay */
+  .heritage-texture {
+    position: relative;
+  }
+  
+  .heritage-texture::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23b87333' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
   }
 }

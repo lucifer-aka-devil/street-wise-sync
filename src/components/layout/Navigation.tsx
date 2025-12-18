@@ -7,8 +7,7 @@ import {
   Shield, 
   User, 
   LogOut, 
-  FileText,
-  Settings
+  Landmark
 } from 'lucide-react';
 
 interface NavigationProps {
@@ -21,27 +20,32 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
   const { t } = useLanguage();
 
   return (
-    <nav className="bg-white/90 backdrop-blur-lg shadow-soft border-b border-white/30 sticky top-0 z-50 animate-fade-in">
+    <nav className="bg-card/95 backdrop-blur-lg shadow-medium border-b border-border/50 sticky top-0 z-50 animate-fade-in">
+      {/* Heritage decorative top line */}
+      <div className="h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+      
       <div className="container-responsive">
         <div className="flex justify-between items-center h-16 sm:h-20">
-          {/* Logo and Brand - Prince's orange theme with enhanced styling */}
+          {/* Logo and Brand - Heritage theme */}
           <div className="flex items-center space-x-4 sm:space-x-8 min-w-0">
             <div className="flex items-center min-w-0">
               <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  JS
+                <div className="w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center text-primary-foreground font-bold text-sm sm:text-base flex-shrink-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-accent/30">
+                  <Landmark className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div className="min-w-0">
-                  <h1 className="text-base sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent truncate">
+                  <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-heading-heritage truncate" style={{ fontFamily: "'Playfair Display', serif" }}>
                     <span className="hidden sm:inline">Ministry of Jal Shakti</span>
                     <span className="sm:hidden">Jal Shakti</span>
                   </h1>
-                  <p className="text-xs sm:text-sm text-body hidden sm:block font-medium">{t('nav.portal')}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block font-medium" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    {t('nav.portal')}
+                  </p>
                 </div>
               </div>
             </div>
             
-            {/* Navigation Buttons - Prince's design with conditional rendering */}
+            {/* Navigation Buttons - Heritage design */}
             {user && (
               <div className="hidden md:flex space-x-3">
                 {/* Show citizen portal only for non-staff users */}
@@ -51,9 +55,10 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                     onClick={() => onViewChange('citizen')}
                     className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
                       currentView === 'citizen' 
-                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:shadow-xl' 
-                        : 'hover:bg-orange-50 hover:text-orange-600'
+                        ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-secondary hover:text-primary'
                     }`}
+                    style={{ fontFamily: "'Playfair Display', serif" }}
                     size="sm"
                   >
                     <Home className="h-4 w-4" />
@@ -69,9 +74,10 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                     onClick={() => onViewChange('admin')}
                     className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${
                       currentView === 'admin' 
-                        ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-lg hover:shadow-xl' 
-                        : 'hover:bg-orange-50 hover:text-orange-600'
+                        ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg hover:shadow-xl' 
+                        : 'hover:bg-secondary hover:text-primary'
                     }`}
+                    style={{ fontFamily: "'Playfair Display', serif" }}
                     size="sm"
                   >
                     <Shield className="h-4 w-4" />
@@ -83,7 +89,7 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
             )}
           </div>
 
-          {/* User Info and Actions - Enhanced with main's improvements */}
+          {/* User Info and Actions - Heritage styling */}
           <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
             {/* Language Selector */}
             <div className="animate-fade-in">
@@ -91,18 +97,18 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
             </div>
             {user ? (
               <>
-                {/* User Info - Enhanced */}
+                {/* User Info - Heritage Enhanced */}
                 <div className="hidden sm:flex items-center space-x-3 text-sm min-w-0 animate-slide-up">
-                  <div className="flex items-center gap-3 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl px-4 py-2 shadow-soft hover:shadow-medium transition-all duration-300">
-                    <div className="w-10 h-10 bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <User className="h-5 w-5 text-white" />
+                  <div className="flex items-center gap-3 bg-gradient-to-r from-secondary to-muted rounded-xl px-4 py-2 shadow-soft hover:shadow-medium transition-all duration-300 border border-border/30">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <User className="h-5 w-5 text-primary-foreground" />
                     </div>
                     <div className="min-w-0">
-                      <div className="truncate max-w-[120px] md:max-w-none font-semibold text-slate-800">
+                      <div className="truncate max-w-[120px] md:max-w-none font-semibold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
                         {profile?.full_name || user.email}
                       </div>
                       {profile?.role && profile.role !== 'citizen' && (
-                        <div className="text-xs text-slate-500 hidden md:block capitalize font-medium">
+                        <div className="text-xs text-muted-foreground hidden md:block capitalize font-medium">
                           {profile.role}
                         </div>
                       )}
@@ -112,8 +118,8 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                 
                 {/* Mobile User Icon */}
                 <div className="sm:hidden flex items-center animate-fade-in">
-                  <div className="w-10 h-10 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center shadow-soft">
-                    <User className="h-5 w-5 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-soft">
+                    <User className="h-5 w-5 text-primary-foreground" />
                   </div>
                 </div>
                 
@@ -121,23 +127,24 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   variant="outline"
                   size="sm"
                   onClick={signOut}
-                  className="flex items-center gap-2 border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300 touch-target hover:scale-105 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-2 border-border hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-all duration-300 touch-target hover:scale-105 shadow-sm hover:shadow-md"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
                 >
                   <LogOut className="h-4 w-4" />
                   <span className="hidden sm:inline font-medium">{t('nav.signOut')}</span>
                 </Button>
               </>
             ) : (
-              <div className="text-sm text-body hidden sm:block bg-gradient-to-r from-slate-50 to-slate-100 px-4 py-2 rounded-xl shadow-soft animate-fade-in">
+              <div className="text-sm text-muted-foreground hidden sm:block bg-gradient-to-r from-secondary to-muted px-4 py-2 rounded-xl shadow-soft animate-fade-in border border-border/30" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {t('nav.signInPrompt')}
               </div>
             )}
           </div>
         </div>
         
-        {/* Mobile Navigation Menu - Prince's design with proper conditional rendering */}
+        {/* Mobile Navigation Menu - Heritage design */}
         {user && (
-          <div className="md:hidden border-t border-slate-200/50 pt-4 pb-4 bg-gradient-to-r from-slate-50/80 to-white/80 backdrop-blur-sm animate-slide-up">
+          <div className="md:hidden border-t border-border/50 pt-4 pb-4 bg-gradient-to-r from-secondary/80 to-card/80 backdrop-blur-sm animate-slide-up">
             <div className="flex space-x-3">
               {/* Show citizen portal only for non-staff users */}
               {!isStaff && (
@@ -146,9 +153,10 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   onClick={() => onViewChange('citizen')}
                   className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
                     currentView === 'citizen' 
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md' 
-                      : 'hover:bg-orange-50 hover:text-orange-600'
+                      ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md' 
+                      : 'hover:bg-secondary hover:text-primary'
                   }`}
+                  style={{ fontFamily: "'Playfair Display', serif" }}
                   size="sm"
                 >
                   <Home className="h-4 w-4" />
@@ -163,9 +171,10 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                   onClick={() => onViewChange('admin')}
                   className={`flex items-center gap-2 text-sm flex-1 font-medium transition-all duration-200 ${
                     currentView === 'admin' 
-                      ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md' 
-                      : 'hover:bg-orange-50 hover:text-orange-600'
+                      ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md' 
+                      : 'hover:bg-secondary hover:text-primary'
                   }`}
+                  style={{ fontFamily: "'Playfair Display', serif" }}
                   size="sm"
                 >
                   <Shield className="h-4 w-4" />
