@@ -576,7 +576,7 @@ export default function CitizenDashboard() {
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-600 rounded-full"></div>
                 </div>
               </div>
-              <h1 className="text-base sm:text-lg font-bold text-gray-900">Civic Dashboard</h1>
+              <h1 className="text-base sm:text-lg font-bold text-gray-900">Heritage Dashboard</h1>
             </div>
           </div>
           
