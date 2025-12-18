@@ -6,34 +6,34 @@ import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
-import { AlertTriangle, Loader2, MapPin, Users, Landmark, Droplets, ScrollText } from 'lucide-react';
+import { AlertTriangle, Loader2, MapPin, Users, Landmark, Camera, ScrollText } from 'lucide-react';
 import { useState } from 'react';
 
-// Heritage places data
+// Heritage places data - Famous ASI protected monuments
 const heritagePlaces = [
   {
-    name: "Rani Ki Vav",
-    location: "Patan, Gujarat",
-    description: "UNESCO World Heritage stepwell showcasing ancient water architecture",
-    image: "https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=400&h=250&fit=crop"
+    name: "Taj Mahal",
+    location: "Agra, Uttar Pradesh",
+    description: "UNESCO World Heritage Site - A symbol of eternal love and Mughal architecture",
+    image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400&h=250&fit=crop"
   },
   {
-    name: "Chand Baori",
-    location: "Abhaneri, Rajasthan", 
-    description: "One of the deepest stepwells in India with 3,500 narrow steps",
-    image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=250&fit=crop"
-  },
-  {
-    name: "Agrasen Ki Baoli",
+    name: "Qutub Minar",
     location: "New Delhi",
-    description: "Historic stepwell featuring 103 steps and beautiful stone architecture",
+    description: "UNESCO World Heritage Site - 73m tall victory tower from the 12th century",
     image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400&h=250&fit=crop"
   },
   {
-    name: "Adalaj Stepwell",
-    location: "Adalaj, Gujarat",
-    description: "Five-story stepwell with intricate Indo-Islamic architectural carvings",
-    image: "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=400&h=250&fit=crop"
+    name: "Hampi Ruins",
+    location: "Karnataka",
+    description: "UNESCO World Heritage Site - Ruins of the Vijayanagara Empire",
+    image: "https://images.unsplash.com/photo-1600100397608-e1d09b82a41e?w=400&h=250&fit=crop"
+  },
+  {
+    name: "Konark Sun Temple",
+    location: "Odisha",
+    description: "UNESCO World Heritage Site - 13th century temple dedicated to the Sun God",
+    image: "https://images.unsplash.com/photo-1621427642595-9bd5c0bb1929?w=400&h=250&fit=crop"
   }
 ];
 
@@ -88,16 +88,16 @@ export default function AuthPage() {
                 <div className="w-18 h-18 sm:w-22 sm:h-22 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-xl overflow-hidden border-2 border-accent/30">
                   <img
                     src="/logo.png"
-                    alt="Ministry of Jal Shakti Logo"
+                    alt="Archaeological Survey of India Logo"
                     className="w-16 h-16 sm:w-20 sm:h-20 object-contain p-1"
                   />
                 </div>
                 <div className="text-left">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-heading-heritage" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    Ministry of Jal Shakti
+                    Archaeological Survey of India
                   </h1>
                   <p className="text-lg sm:text-xl text-muted-foreground font-medium" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    Heritage Civic Portal
+                    Heritage Reporting Portal
                   </p>
                 </div>
               </div>
@@ -110,7 +110,7 @@ export default function AuthPage() {
                   <div className="h-px w-8 bg-gradient-to-l from-transparent to-accent" />
                 </div>
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed italic" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  "Preserving India's Water Heritage — Every report contributes to our legacy"
+                  "Protecting India's Cultural Heritage — Every report contributes to our legacy"
                 </p>
               </div>
             </div>
@@ -125,19 +125,19 @@ export default function AuthPage() {
                   <h3 className="font-semibold text-foreground text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
                     Heritage Documentation
                   </h3>
-                  <p className="text-muted-foreground mt-1">Document and preserve water-related heritage sites and infrastructure</p>
+                  <p className="text-muted-foreground mt-1">Document and preserve archaeological sites, monuments and heritage structures</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-5 rounded-xl bg-card/80 backdrop-blur-sm border border-border/50 shadow-md hover:shadow-lg transition-all duration-300 heritage-texture">
                 <div className="p-3 bg-gradient-to-br from-accent/20 to-accent/10 rounded-xl flex-shrink-0 border border-accent/20">
-                  <Droplets className="h-6 w-6 text-accent" />
+                  <Camera className="h-6 w-6 text-accent" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-semibold text-foreground text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    Water Conservation
+                    Site Preservation
                   </h3>
-                  <p className="text-muted-foreground mt-1">Report and track water conservation efforts across the nation</p>
+                  <p className="text-muted-foreground mt-1">Report and track preservation efforts at heritage sites across India</p>
                 </div>
               </div>
 
@@ -149,7 +149,7 @@ export default function AuthPage() {
                   <h3 className="font-semibold text-foreground text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
                     Community Participation
                   </h3>
-                  <p className="text-muted-foreground mt-1">Join hands with citizens to preserve our collective water heritage</p>
+                  <p className="text-muted-foreground mt-1">Join hands with citizens to protect our collective cultural heritage</p>
                 </div>
               </div>
             </div>
@@ -306,10 +306,10 @@ export default function AuthPage() {
               <div className="h-px w-16 bg-gradient-to-l from-transparent to-accent" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-heading-heritage mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-              India's Water Heritage
+              India's Protected Monuments
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Discover the magnificent stepwells and water structures that showcase India's ancient wisdom in water conservation
+              Discover the magnificent heritage sites protected by the Archaeological Survey of India
             </p>
           </div>
 
@@ -349,11 +349,11 @@ export default function AuthPage() {
           {/* Footer tagline */}
           <div className="mt-12 text-center">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-card/80 rounded-full border border-border/50 shadow-md">
-              <Droplets className="w-5 h-5 text-primary" />
+              <Landmark className="w-5 h-5 text-primary" />
               <p className="text-muted-foreground text-sm" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Join us in preserving and protecting India's water heritage for future generations
+                Join us in preserving and protecting India's cultural heritage for future generations
               </p>
-              <Droplets className="w-5 h-5 text-primary" />
+              <Landmark className="w-5 h-5 text-primary" />
             </div>
           </div>
         </div>

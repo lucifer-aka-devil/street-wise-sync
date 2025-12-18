@@ -35,11 +35,11 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
                 </div>
                 <div className="min-w-0">
                   <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-heading-heritage truncate" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    <span className="hidden sm:inline">Ministry of Jal Shakti</span>
-                    <span className="sm:hidden">Jal Shakti</span>
+                    <span className="hidden sm:inline">Archaeological Survey of India</span>
+                    <span className="sm:hidden">ASI</span>
                   </h1>
                   <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block font-medium" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    {t('nav.portal')}
+                    Heritage Reporting Portal
                   </p>
                 </div>
               </div>
